@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException,Body
 from fastapi.middleware.cors import CORSMiddleware
 import pymysql
 from app.database import get_connection
@@ -99,18 +99,27 @@ def consultar_usuario(cedula: str):
     else:
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
 
-# 🟢 Actualizar usuario
-@app.put("/usuarios/{cedula}")
-def actualizar_usuario(cedula: str, usuario: Usuario):
+# 🟢 Actualizar usuario (patch)
+@app.patch("/usuarios/{cedula}")
+def actualizar_usuario(cedula: str, usuario: dict = Body(...)):
     conn = get_connection()
     cursor = conn.cursor()
 
-    cursor.execute("""
-        UPDATE Usuario
-        SET nombre=%s, apellido=%s, telefono=%s, direccion=%s, zona=%s, email=%s, password=%s
-        WHERE id_cliente=%s
-    """, (usuario.nombre, usuario.apellido, usuario.telefono, usuario.direccion, usuario.zona, usuario.email, usuario.password, cedula))
+    # Construir consulta dinámica SOLO con campos no vacíos
+    campos = []
+    valores = []
+    for k, v in usuario.items():
+        if k != "cedula" and v != "":
+            campos.append(f"{k}=%s")
+            valores.append(v)
 
+    if not campos:
+        raise HTTPException(status_code=400, detail="No se enviaron campos para actualizar")
+
+    query = f"UPDATE Usuario SET {', '.join(campos)} WHERE id_cliente=%s"
+    valores.append(cedula)
+
+    cursor.execute(query, valores)
     conn.commit()
     cursor.close()
     conn.close()

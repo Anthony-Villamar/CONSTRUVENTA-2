@@ -2,5 +2,5 @@ from pydantic import BaseModel
 
 
 class ClienteLogin(BaseModel):
-    cedula: str
+    email: str
     password: str

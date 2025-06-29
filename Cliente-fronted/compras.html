@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Tus Compras</title>
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="venta.html">Inicio</a>
+      <a href="compras.html">Tus Compras</a>
+      <a href="seguimiento.html">Seguimiento de Envío</a>
+      <a href="perfil.html">Perfil</a>
+      <a href="index.html">Log out</a>
+    </nav>
+  </header>
+
+  <main>
+    <h2>Tus Compras</h2>
+    <form id="filtro-fechas">
+  <label>Desde: <input type="date" id="fecha_inicio"></label>
+  <label>Hasta: <input type="date" id="fecha_fin"></label>
+  <button type="submit">Filtrar</button>
+</form>
+
+<div id="lista-compras"></div>
+
+  </main>
+
+  <footer>
+    <p>© 2025 ConstruVenta. Todos los derechos reservados.</p>
+  </footer>
+
+  <script src="compras.js"></script>
+</body>
+</html>

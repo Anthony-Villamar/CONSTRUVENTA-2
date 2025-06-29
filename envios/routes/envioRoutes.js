@@ -52,5 +52,49 @@ router.post("/envios", async (req, res) => {
     }
 });
 
+// Obtener envíos por cliente
+router.get("/envios/usuario/:id_cliente", async (req, res) => {
+  const { id_cliente } = req.params;
+
+  try {
+    const [filas] = await db.execute(`
+      SELECT e.*, t.nombre AS transporte_nombre, t.precio AS transporte_precio
+      FROM envios e
+      JOIN pedido p ON e.id_pedido = p.id_pedido
+      JOIN transportes t ON e.transporte_id = t.id
+      WHERE p.id_cliente = ?
+    `, [id_cliente]);
+
+    res.json(filas);
+  } catch (error) {
+    console.error("❌ Error al obtener envíos por usuario:", error.message);
+    res.status(500).json({ mensaje: "Error al obtener envíos", error: error.message });
+  }
+});
+
+// 🟢 Simulación automática de cambio de estado
+const estados = ["pendiente", "en tránsito", "entregado"];
+
+setInterval(async () => {
+  try {
+    const [envios] = await db.execute(`
+      SELECT id_envio, estado FROM envios WHERE estado != 'entregado'
+    `);
+
+    for (const envio of envios) {
+      const currentIndex = estados.indexOf(envio.estado);
+      const nextEstado = estados[currentIndex + 1] || "entregado";
+
+      await db.execute(`
+        UPDATE envios SET estado = ? WHERE id_envio = ?
+      `, [nextEstado, envio.id_envio]);
+
+      console.log(`🔄 Estado de envío ${envio.id_envio} actualizado a '${nextEstado}'`);
+    }
+  } catch (error) {
+    console.error("❌ Error en simulación automática:", error.message);
+  }
+}, 10000); // cada 10 segundos
+
 
 export default router;

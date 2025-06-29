@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Seguimiento de Envíos</title>
+  <style>
+    .envio {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <a href="index.html">Inicio</a> |
+    <a href="compras.html">Tus Compras</a> |
+    <a href="seguimiento.html">Seguimiento de Envío</a> |
+    <a href="perfil.html">Perfil</a> |
+    <a href="#" onclick="logout()">Log out</a>
+  </nav>
+</header>
+
+<h2>Seguimiento de tus envíos</h2>
+<div id="lista-envios"></div>
+
+<footer>
+  <p>© 2025 ConstrVenta. Todos los derechos reservados.</p>
+</footer>
+
+<script src="seguimiento.js"></script>
+<script>
+  function logout() {
+    localStorage.clear();
+    window.location.href = "login.html";
+  }
+</script>
+
+</body>
+</html>
