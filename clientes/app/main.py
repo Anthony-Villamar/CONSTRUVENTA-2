@@ -16,7 +16,7 @@ app.add_middleware(
 
 @app.get("/")
 async def root():
-    return {"mensaje": "API Usuarios funcionando"}
+    return {"mensaje": " Usuarios funcionando"}
 
 # 🟢 Registro de usuario
 @app.post("/usuarios")
