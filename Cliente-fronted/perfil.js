@@ -15,7 +15,7 @@ document.getElementById("perfil-form").addEventListener("submit", async (e) => {
     rol: "cliente"  // ✅ Envía si tu modelo lo requiere por defecto
   };
 
-  const res = await fetch(`http://localhost:3000/usuarios/${usuario_id}`, {
+  const res = await fetch(`https://usuarios-1yw0.onrender.com/usuarios/${usuario_id}`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data)
