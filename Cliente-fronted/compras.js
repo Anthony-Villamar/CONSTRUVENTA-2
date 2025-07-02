@@ -5,7 +5,7 @@ window.onload = () => {
 };
 
 async function cargarCompras(fecha_inicio = "", fecha_fin = "") {
-  let url = `http://localhost:8000/api/pedidos/usuario/${usuario_id}`;
+  let url = `https://construventa-3.onrender.com/api/pedidos/usuario/${usuario_id}`;
 
   // Si se especifican fechas, agregarlas como parámetros
   const params = new URLSearchParams();
