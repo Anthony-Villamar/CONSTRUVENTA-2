@@ -160,7 +160,7 @@ paypal.Buttons({
             console.log("📝 id_pedido recibido:", id_pedido);
 
             // 2. Generar factura
-            const facturaRes = await fetch("http://127.0.0.1:4000/facturas", {
+            const facturaRes = await fetch("https://facturacion-dhh9.onrender.com/facturas", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ id_pedido, transporte_precio: totalTransporte })
