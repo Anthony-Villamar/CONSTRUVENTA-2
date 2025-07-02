@@ -142,7 +142,7 @@ paypal.Buttons({
 
         try {
             // 1. Crear pedido
-            const pedidoRes = await fetch("http://127.0.0.1:8000/api/pedidos", {
+            const pedidoRes = await fetch("https://construventa-3.onrender.com/api/pedidos", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
