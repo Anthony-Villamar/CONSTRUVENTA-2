@@ -5,7 +5,7 @@ let totalTransporte = 0;
 const usuario_id = localStorage.getItem("cedula");
 
 async function cargarProductos() {
-    const res = await fetch("http://127.0.0.1:8002/api/productos");
+    const res = await fetch("https://inventario-d5am.onrender.com/api/productos");
     const productos = await res.json();
     const contenedor = document.getElementById("productos");
     contenedor.innerHTML = "";
