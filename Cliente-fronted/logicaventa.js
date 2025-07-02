@@ -88,12 +88,12 @@ let direccion = "";
 let zona = "";
 
 async function cargarTransportes() {
-    const clienteRes = await fetch(`http://localhost:3000/usuarios/${usuario_id}`);
+    const clienteRes = await fetch(`https://usuarios-1yw0.onrender.com/usuarios/${usuario_id}`);
     const cliente = await clienteRes.json();
     direccion = cliente.direccion;
     zona = cliente.zona;
 
-    const res = await fetch(`http://localhost:3001/transportes/${zona}`);
+    const res = await fetch(`https://construventa-2-1.onrender.com/transportes/${zona}`);
     transportesDisponibles = await res.json();
 
     const selector = document.getElementById("selectorTransporte");
@@ -168,7 +168,7 @@ paypal.Buttons({
             if (!facturaRes.ok) throw new Error("❌ Error en /facturas");
 
             // 3. Registrar envío
-            const envioRes = await fetch("http://127.0.0.1:3001/envios", {
+            const envioRes = await fetch("https://construventa-2-1.onrender.com/envios", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
