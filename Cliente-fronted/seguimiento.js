@@ -6,7 +6,7 @@ window.onload = () => {
 };
 
 async function cargarEnvios() {
-  const res = await fetch(`http://localhost:3001/envios/usuario/${usuario_id}`);
+  const res = await fetch(`https://construventa-2-1.onrender.com/envios/usuario/${usuario_id}`);
   const lista = document.getElementById("lista-envios");
 
   if (!res.ok) {
