@@ -100,5 +100,3 @@ class PedidoController extends Controller
 
 
 }
-
-
