@@ -26,7 +26,7 @@ def registrar_usuario(usuario: Usuario):
 
     try:
         cursor.execute("""
-            INSERT INTO Usuario (id_cliente, nombre, apellido, telefono, direccion, zona, email, password, rol)
+            INSERT INTO usuario (id_cliente, nombre, apellido, telefono, direccion, zona, email, password, rol)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
         """, (
             usuario.cedula, usuario.nombre, usuario.apellido,
@@ -51,7 +51,7 @@ def login(email: str, password: str):
     cursor = conn.cursor()
 
     cursor.execute("""
-        SELECT id_cliente, nombre, apellido, rol FROM Usuario
+        SELECT id_cliente, nombre, apellido, rol FROM usuario
         WHERE email = %s AND password = %s
     """, (email, password))
 
@@ -79,7 +79,7 @@ def consultar_usuario(cedula: str):
 
     cursor.execute("""
         SELECT id_cliente, nombre, apellido, telefono, direccion, zona, email
-        FROM Usuario WHERE id_cliente = %s
+        FROM usuario WHERE id_cliente = %s
     """, (cedula,))
     row = cursor.fetchone()
 
@@ -116,7 +116,7 @@ def actualizar_usuario(cedula: str, usuario: dict = Body(...)):
     if not campos:
         raise HTTPException(status_code=400, detail="No se enviaron campos para actualizar")
 
-    query = f"UPDATE Usuario SET {', '.join(campos)} WHERE id_cliente=%s"
+    query = f"UPDATE usuario SET {', '.join(campos)} WHERE id_cliente=%s"
     valores.append(cedula)
 
     cursor.execute(query, valores)
