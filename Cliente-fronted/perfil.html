@@ -1,28 +1,19 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <title>Mi Perfil</title>
+    <meta charset="UTF-8">
+    <title>Registro de Cliente</title>
 </head>
 <body>
-  <header>
-    <nav>
-      <a href="venta.html">Inicio</a>
-      <a href="compras.html">Tus Compras</a>
-      <a href="seguimiento.html">Seguimiento de Envío</a>
-      <a href="perfil.html">Perfil</a>
-      <a href="index.html">Log out</a>
-    </nav>
-  </header>
+    <h2>Registro de Cliente</h2>
 
-  <main>
-    <h2>Actualizar Perfil</h2>
-    <form id="perfil-form">
-      <input type="text" id="nombre" placeholder="Nombre" ><br>
-      <input type="text" id="apellido" placeholder="Apellido" ><br>
-      <input type="text" id="telefono" placeholder="Teléfono" ><br>
-      <input type="text" id="direccion" placeholder="Dirección" ><br>
-      <label for="zona">Zona:</label><br>
+    <form id="formulario">
+        <input type="text" id="cedula" placeholder="Cédula" required maxlength="10" pattern="\d{10}" title="Solo números, exactamente 10 dígitos"><br>
+        <input type="text" id="nombre" placeholder="Nombre" required><br>
+        <input type="text" id="apellido" placeholder="Apellido" required><br>
+<input type="text" id="telefono" placeholder="Teléfono" required maxlength="10" pattern="\d{7,10}" title="Solo números, entre 7 y 10 dígitos"><br>
+        <input type="text" id="direccion" placeholder="Dirección" required><br>
+        <label for="zona">Zona:</label><br>
 <select id="zona" required>
     <option value="" disabled selected>Selecciona una zona</option>
     <option value="norte">Norte</option>
@@ -32,16 +23,113 @@
     <option value="oeste">Oeste</option>
 </select><br>
 
-      <input type="email" id="email" placeholder="Email" ><br>
-      <input type="password" id="password" placeholder="Contraseña"><br>
-      <button type="submit">Actualizar</button>
+        <input type="email" id="email" placeholder="Correo (debe ser @gmail.com)" required><br>
+        <input type="password" id="password" placeholder="Contraseña" required><br>
+
+        <button type="submit">Registrar</button>
     </form>
-  </main>
 
-  <footer>
-    <p>© 2025 ConstruVenta. Todos los derechos reservados.</p>
-  </footer>
+    <br><a href="index.html">Ir a Login</a>
 
-  <script src="perfil.js"></script>
+    <script>
+        document.getElementById("formulario").addEventListener("submit", async function (e) {
+            e.preventDefault();
+
+            const cedulaInput = document.getElementById("cedula");
+            const emailInput = document.getElementById("email");
+            const cedula = cedulaInput.value.trim();
+            const email = emailInput.value.trim();
+
+            if (!validarCedula(cedula)) {
+                alert("Cédula inválida.");
+                cedulaInput.focus();
+                return;
+            }
+
+            if (!email.endsWith("@gmail.com")) {
+                alert("El correo debe terminar en @gmail.com");
+                emailInput.focus();
+                return;
+            }
+
+            const data = {
+                cedula,
+                nombre: document.getElementById("nombre").value,
+                apellido: document.getElementById("apellido").value,
+                telefono: document.getElementById("telefono").value,
+                direccion: document.getElementById("direccion").value,
+                zona: document.getElementById("zona").value,
+                email,
+                password: document.getElementById("password").value,
+                rol: "cliente"
+            };
+
+            try {
+                const res = await fetch("http://localhost:3000/usuarios", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data)
+                });
+
+                if (res.ok) {
+                    alert("Cliente registrado exitosamente.");
+                    window.location.href = "index.html";
+                } else {
+                    const err = await res.json();
+                    alert("Error: " + (err.detail || "No se pudo registrar"));
+                }
+            } catch (error) {
+                alert("Error de conexión con el servidor.");
+                console.error(error);
+            }
+        });
+
+        function validarCedula(cedula) {
+            if (!/^\d{10}$/.test(cedula)) return false;
+
+            const provincia = parseInt(cedula.slice(0, 2));
+            const digitoTres = parseInt(cedula[2]);
+
+            if (provincia < 1 || provincia > 24) return false;
+
+            let coef, verificador, modulo;
+            if (digitoTres < 6) {
+                coef = [2,1,2,1,2,1,2,1,2];
+                verificador = parseInt(cedula[9]);
+                modulo = 10;
+            } else if (digitoTres === 6) {
+                coef = [3,2,7,6,5,4,3,2];
+                verificador = parseInt(cedula[8]);
+                modulo = 11;
+            } else if (digitoTres === 9) {
+                coef = [4,3,2,7,6,5,4,3,2];
+                verificador = parseInt(cedula[9]);
+                modulo = 11;
+            } else {
+                return false;
+            }
+
+            let total = 0;
+            for (let i = 0; i < coef.length; i++) {
+                let val = coef[i] * parseInt(cedula[i]);
+                if (digitoTres < 6 && val >= 10) val -= 9;
+                total += val;
+            }
+
+            const resultado = total % modulo;
+            const digitoObtenido = resultado === 0 ? 0 : modulo - resultado;
+
+            return digitoObtenido === verificador;
+        }
+
+
+        // Bloquear letras en cédula y teléfono
+["cedula", "telefono"].forEach(id => {
+    document.getElementById(id).addEventListener("input", function () {
+        this.value = this.value.replace(/\D/g, ""); // Reemplaza todo lo que no sea dígito
+    });
+});
+
+    </script>
 </body>
 </html>
