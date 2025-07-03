@@ -21,6 +21,12 @@
 
             const params = new URLSearchParams({ email, password });
 
+            if (!email.endsWith("@gmail.com")) {
+                alert("El correo debe terminar en @gmail.com");
+                emailInput.focus();
+                return;
+            }
+
             const res = await fetch(`https://usuarios-1yw0.onrender.com/login?${params.toString()}`, {
                 method: "POST"
             });
@@ -32,7 +38,7 @@
                 // Guardamos el usuario para después
                 localStorage.setItem("cedula", data.cedula);
                 localStorage.setItem("rol", data.rol);
-
+                
                 if (data.rol === "admin") {
                     window.location.href = "admin.html";
                 } else {
