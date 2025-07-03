@@ -22,7 +22,16 @@
       <input type="text" id="apellido" placeholder="Apellido" ><br>
       <input type="text" id="telefono" placeholder="Teléfono" ><br>
       <input type="text" id="direccion" placeholder="Dirección" ><br>
-      <input type="text" id="zona" placeholder="Zona" ><br>
+      <label for="zona">Zona:</label><br>
+<select id="zona" required>
+    <option value="" disabled selected>Selecciona una zona</option>
+    <option value="norte">Norte</option>
+    <option value="centro">Centro</option>
+    <option value="sur">Sur</option>
+    <option value="este">Este</option>
+    <option value="oeste">Oeste</option>
+</select><br>
+
       <input type="email" id="email" placeholder="Email" ><br>
       <input type="password" id="password" placeholder="Contraseña"><br>
       <button type="submit">Actualizar</button>
