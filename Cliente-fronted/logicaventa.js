@@ -5,7 +5,7 @@ const usuario_id = localStorage.getItem("cedula");
 
 // Cargar productos
 async function cargarProductos() {
-const res = await fetch("https://inventario-d5am.onrender.com/api/productos");
+  const res = await fetch("https://inventario-d5am.onrender.com/api/productos");
   const productos = await res.json();
   const contenedor = document.getElementById("productos");
   contenedor.innerHTML = "";
@@ -41,12 +41,9 @@ function calcularPesoTotal() {
 
 async function asignarTransportePorPeso() {
   const pesoTotal = calcularPesoTotal();
-
   const res = await fetch("https://construventa-2-1.onrender.com/transportes");
   const transportes = await res.json();
-
-  const adecuado = transportes.find(t => pesoTotal <= t.capacidad_max_kg
-);
+  const adecuado = transportes.find(t => pesoTotal <= t.capacidad_max_kg);
   if (adecuado) {
     transporteSeleccionado = adecuado;
     totalTransporte = parseFloat(adecuado.precio);
@@ -56,6 +53,7 @@ async function asignarTransportePorPeso() {
     totalTransporte = 0;
     document.getElementById("precioTransporte").innerText = "Sin transporte disponible para este peso.";
   }
+  actualizarResumen();
 }
 
 function actualizarCarrito() {
@@ -112,26 +110,6 @@ function toggleTransporte() {
   actualizarResumen();
 }
 
-// ✅ Mejora asignarTransportePorPeso para reflejar el precio siempre que se active
-async function asignarTransportePorPeso() {
-  const pesoTotal = calcularPesoTotal();
-
-  const res = await fetch("https://construventa-2-1.onrender.com/transportes");
-  const transportes = await res.json();
-
-  const adecuado = transportes.find(t => pesoTotal <= t.capacidad_max_kg);
-  if (adecuado) {
-    transporteSeleccionado = adecuado;
-    totalTransporte = parseFloat(adecuado.precio);
-    document.getElementById("precioTransporte").innerText = `Precio Transporte: $${totalTransporte.toFixed(2)} (Auto: ${adecuado.nombre})`;
-  } else {
-    transporteSeleccionado = null;
-    totalTransporte = 0;
-    document.getElementById("precioTransporte").innerText = "Sin transporte disponible para este peso.";
-  }
-  actualizarResumen(); // asegúrate de actualizar el resumen al finalizar
-}
-
 paypal.Buttons({
   createOrder: function(data, actions) {
     const subtotal = carrito.reduce((acc, item) => acc + item.precio * item.cantidad, 0);
@@ -151,61 +129,68 @@ paypal.Buttons({
     alert("¡Pago exitoso!");
 
     try {
-        // ✅ 1. Crear pedido
-        const pedidoRes = await fetch("https://construventa-3.onrender.com/api/pedidos", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                usuario_id,
-                productos: carrito.map(item => ({
-                    codigo_producto: item.codigo,
-                    cantidad: item.cantidad
-                }))
-            })
+      // ✅ 1. Crear pedido
+      const pedidoRes = await fetch("https://construventa-3.onrender.com/api/pedidos", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          usuario_id,
+          productos: carrito.map(item => ({
+            codigo_producto: item.codigo,
+            cantidad: item.cantidad
+          }))
+        })
+      });
+      if (!pedidoRes.ok) throw new Error("❌ Error en /api/pedidos");
+
+      const pedidoData = await pedidoRes.json();
+      const id_pedido = pedidoData.ids_pedidos[0];
+      console.log("📝 id_pedido recibido:", id_pedido);
+
+      // ✅ 2. Generar factura
+      const facturaRes = await fetch("https://facturacion-dhh9.onrender.com/facturas", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id_pedido, transporte_precio: totalTransporte })
+      });
+      if (!facturaRes.ok) throw new Error("❌ Error en /facturas");
+
+      // ✅ 3. Registrar envío SOLO SI HAY TRANSPORTE SELECCIONADO
+      if (transporteSeleccionado) {
+        // 🔧 Obtener datos de dirección y zona del usuario antes de registrar envío
+        const usuarioRes = await fetch(`https://usuarios-1yw0.onrender.com/usuarios/${usuario_id}`);
+        const usuario = await usuarioRes.json();
+        const direccion = usuario.direccion;
+        const zona = usuario.zona;
+
+        const envioRes = await fetch("https://construventa-2-1.onrender.com/envios", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            id_pedido,
+            direccion_entrega: direccion,
+            zona_entrega: zona,
+            transporte_id: transporteSeleccionado.id
+          })
         });
-        if (!pedidoRes.ok) throw new Error("❌ Error en /api/pedidos");
+        if (!envioRes.ok) throw new Error("❌ Error en /envios");
 
-        const pedidoData = await pedidoRes.json();
-        const id_pedido = pedidoData.ids_pedidos[0];
-        console.log("📝 id_pedido recibido:", id_pedido);
-
-        // ✅ 2. Generar factura
-        const facturaRes = await fetch("https://facturacion-dhh9.onrender.com/facturas", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ id_pedido, transporte_precio: totalTransporte })
-        });
-        if (!facturaRes.ok) throw new Error("❌ Error en /facturas");
-
-        // ✅ 3. Registrar envío SOLO SI HAY TRANSPORTE SELECCIONADO
-        if (transporteSeleccionado) {
-            const envioRes = await fetch("https://construventa-2-1.onrender.com/envios", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    id_pedido,
-                    direccion_entrega: direccion,
-                    zona_entrega: zona,
-                    transporte_id: transporteSeleccionado.id
-                })
-            });
-            if (!envioRes.ok) throw new Error("❌ Error en /envios");
-
-            const envioData = await envioRes.json();
-            console.log("✅ Envío registrado:", envioData);
-            alert("Pedido, factura y envío registrados correctamente.");
-        } else {
-            console.log("📝 No se registró envío porque no se contrató transporte.");
-            alert("Pedido y factura registrados correctamente (sin transporte).");
-        }
+        const envioData = await envioRes.json();
+        console.log("✅ Envío registrado:", envioData);
+        alert("Pedido, factura y envío registrados correctamente.");
+      } else {
+        console.log("📝 No se registró envío porque no se contrató transporte.");
+        alert("Pedido y factura registrados correctamente (sin transporte).");
+      }
 
     } catch (err) {
-        console.error("❌ Error en onApprove:", err.message);
-        alert("Error al procesar la compra: " + err.message);
+      console.error("❌ Error en onApprove:", err.message);
+      alert("Error al procesar la compra: " + err.message);
     }
-}
+  }
 
 }).render("#paypal-button-container");
+
 (async () => {
   await cargarProductos();
 })();
