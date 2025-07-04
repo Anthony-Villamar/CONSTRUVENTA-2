@@ -6,10 +6,11 @@ const router = express.Router();
 
 // Conexión a base de datos plataforma_construventa
 const db = await mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "",
-    database: "plataforma_construventa"
+   host: process.env.DB_HOST || "localhost",
+  user: process.env.DB_USER || "root",
+  password: process.env.DB_PASSWORD || "",
+  database: process.env.DB_NAME || "plataforma_construventa",
+  port: process.env.DB_PORT || 3306
 });
 
 
