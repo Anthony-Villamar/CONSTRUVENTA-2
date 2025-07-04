@@ -61,9 +61,13 @@
 
 
 <h3>Opciones de Transporte</h3>
-<select id="selectorTransporte" onchange="actualizarPrecioTransporte()">
+<!-- <select id="selectorTransporte" onchange="actualizarPrecioTransporte()">
   <option value="">-- Selecciona un transporte --</option>
-</select>
+</select> -->
+<label>
+  <input type="checkbox" id="usarTransporte" checked onchange="toggleTransporte()"> Usar transporte
+</label>
+
 <p id="precioTransporte">Precio Transporte: $0.00</p>
 
 <div id="paypal-button-container"></div>
