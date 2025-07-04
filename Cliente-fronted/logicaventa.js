@@ -1,10 +1,9 @@
 let carrito = [];
 let transporteSeleccionado = null;
 let totalTransporte = 0;
-let transporteActivo = false; // ✅ Variable global para saber si el transporte está activo
 const usuario_id = localStorage.getItem("cedula");
 
-// 🔄 Cargar productos
+// Cargar productos
 async function cargarProductos() {
   const res = await fetch("https://inventario-d5am.onrender.com/api/productos");
   const productos = await res.json();
@@ -25,47 +24,37 @@ async function cargarProductos() {
   });
 }
 
-// ✅ Agregar producto con control de stock
 function agregarProducto(codigo, nombre, precio, peso, stock) {
-  const cantidad = parseInt(document.getElementById("cantidad_" + codigo).value);
+  const cantidadInput = document.getElementById("cantidad_" + codigo);
+  const cantidad = parseInt(cantidadInput.value);
 
+  // ✅ Validación de stock antes de agregar
   if (cantidad > stock) {
-    alert(`No puedes agregar más de ${stock} unidades de este producto.`);
+    alert(`No puedes agregar más de ${stock} unidades en stock.`);
     return;
   }
 
   const item = carrito.find(p => p.codigo === codigo);
   if (item) {
     if (item.cantidad + cantidad > stock) {
-      alert(`No puedes agregar más de ${stock} unidades en total de este producto.`);
+      alert(`No puedes tener más de ${stock} unidades en el carrito.`);
       return;
     }
     item.cantidad += cantidad;
   } else {
     carrito.push({ codigo, nombre, precio, peso, cantidad });
   }
-
   actualizarCarrito();
 }
 
-// 🧮 Calcular peso total
 function calcularPesoTotal() {
   return carrito.reduce((total, item) => total + (item.peso * item.cantidad), 0);
 }
 
-// 🚚 Asignar transporte solo si transporteActivo es true
 async function asignarTransportePorPeso() {
-  if (!transporteActivo) {
-    transporteSeleccionado = null;
-    totalTransporte = 0;
-    document.getElementById("precioTransporte").innerText = "Transporte desactivado";
-    return;
-  }
-
   const pesoTotal = calcularPesoTotal();
   const res = await fetch("https://construventa-2-1.onrender.com/transportes");
   const transportes = await res.json();
-
   const adecuado = transportes.find(t => pesoTotal <= t.capacidad_max_kg);
   if (adecuado) {
     transporteSeleccionado = adecuado;
@@ -76,10 +65,9 @@ async function asignarTransportePorPeso() {
     totalTransporte = 0;
     document.getElementById("precioTransporte").innerText = "Sin transporte disponible para este peso.";
   }
-  actualizarResumen();
+  actualizarResumen(); // ✅ Asegúrate de actualizar siempre después
 }
 
-// 🛒 Actualizar carrito
 function actualizarCarrito() {
   const lista = document.getElementById("carrito");
   lista.innerHTML = "";
@@ -91,20 +79,26 @@ function actualizarCarrito() {
     `;
     lista.appendChild(li);
   });
-  asignarTransportePorPeso();
-  actualizarResumen();
+  const usar = document.getElementById("usarTransporte").checked;
+  if (usar) {
+    asignarTransportePorPeso();
+  } else {
+    totalTransporte = 0;
+    transporteSeleccionado = null;
+    document.getElementById("precioTransporte").innerText = "Transporte desactivado";
+    actualizarResumen();
+  }
 }
 
-// ❌ Eliminar producto del carrito
 function eliminarProducto(index) {
   carrito.splice(index, 1);
   actualizarCarrito();
 }
 
-// 💲 Actualizar resumen de compra
 function actualizarResumen() {
   let subtotal = carrito.reduce((acc, p) => acc + p.precio * p.cantidad, 0);
-  const envio = transporteActivo ? parseFloat(totalTransporte) : 0;
+  const usarTransporte = document.getElementById("usarTransporte").checked;
+  const envio = usarTransporte ? parseFloat(totalTransporte) : 0;
   const iva = (subtotal + envio) * 0.15;
   const estimacionTotal = subtotal + envio + iva;
 
@@ -123,19 +117,26 @@ function actualizarResumen() {
   document.getElementById("estimacion-total").innerText = `$${estimacionTotal.toFixed(2)}`;
 }
 
-// ✅ Checkbox transporte
+// ✅ Checkbox para usar transporte o no
 function toggleTransporte() {
-  transporteActivo = document.getElementById("usarTransporte").checked;
-  asignarTransportePorPeso();
+  const usar = document.getElementById("usarTransporte").checked;
+
+  if (!usar) {
+    totalTransporte = 0;
+    transporteSeleccionado = null;
+    document.getElementById("precioTransporte").innerText = "Transporte desactivado";
+    actualizarResumen(); // ✅ Refresca inmediatamente al desactivar
+  } else {
+    asignarTransportePorPeso();
+  }
 }
 
-// 💳 PayPal Buttons
 paypal.Buttons({
   createOrder: function(data, actions) {
     const subtotal = carrito.reduce((acc, item) => acc + item.precio * item.cantidad, 0);
-    const envio = transporteActivo ? totalTransporte : 0;
-    const iva = (subtotal + envio) * 0.15;
-    const totalFinal = subtotal + envio + iva;
+    const envio = document.getElementById("usarTransporte").checked ? totalTransporte : 0;
+    const subtotalFinal = (subtotal + envio) * 0.15;
+    const totalFinal = subtotal + envio + subtotalFinal;
 
     if (totalFinal <= 0) {
       alert("No puedes pagar un total de $0.00. Agrega productos al carrito.");
@@ -150,7 +151,7 @@ paypal.Buttons({
     alert("¡Pago exitoso!");
 
     try {
-      // 1️⃣ Crear pedido
+      // ✅ 1. Crear pedido
       const pedidoRes = await fetch("https://construventa-3.onrender.com/api/pedidos", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -168,7 +169,7 @@ paypal.Buttons({
       const id_pedido = pedidoData.ids_pedidos[0];
       console.log("📝 id_pedido recibido:", id_pedido);
 
-      // 2️⃣ Generar factura
+      // ✅ 2. Generar factura
       const facturaRes = await fetch("https://facturacion-dhh9.onrender.com/facturas", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -176,18 +177,20 @@ paypal.Buttons({
       });
       if (!facturaRes.ok) throw new Error("❌ Error en /facturas");
 
-      // 3️⃣ Registrar envío si transporte activo
-      if (transporteActivo && transporteSeleccionado) {
+      // ✅ 3. Registrar envío SOLO SI HAY TRANSPORTE SELECCIONADO
+      if (transporteSeleccionado) {
         const usuarioRes = await fetch(`https://usuarios-1yw0.onrender.com/usuarios/${usuario_id}`);
         const usuario = await usuarioRes.json();
+        const direccion = usuario.direccion;
+        const zona = usuario.zona;
 
         const envioRes = await fetch("https://construventa-2-1.onrender.com/envios", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             id_pedido,
-            direccion_entrega: usuario.direccion,
-            zona_entrega: usuario.zona,
+            direccion_entrega: direccion,
+            zona_entrega: zona,
             transporte_id: transporteSeleccionado.id
           })
         });
@@ -209,7 +212,6 @@ paypal.Buttons({
 
 }).render("#paypal-button-container");
 
-// 🔃 Inicializar
 (async () => {
   await cargarProductos();
 })();
