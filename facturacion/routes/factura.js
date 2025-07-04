@@ -6,12 +6,13 @@ const router = express.Router();
 
 // Conexión a base de datos plataforma_construventa
 const db = await mysql.createConnection({
-  host: process.env.DB_HOST || "localhost",
-  user: process.env.DB_USER || "root",
-  password: process.env.DB_PASSWORD || "",
-  database: process.env.DB_NAME || "plataforma_construventa",
-  port: process.env.DB_PORT || 3306
+    host: "localhost",
+    user: "root",
+    password: "",
+    database: "plataforma_construventa"
 });
+
+
 
 // Ruta POST /facturas
 router.post("/facturas", async (req, res) => {
@@ -22,7 +23,7 @@ router.post("/facturas", async (req, res) => {
 
     try {
         // Obtener detalles del pedido desde Laravel
-        const pedidoRes = await axios.get(`https://construventa-3.onrender.com/api/pedidos/${id_pedido}`);
+        const pedidoRes = await axios.get(`http://localhost:8000/api/pedidos/${id_pedido}`);
         const pedido = pedidoRes.data;
 
         if (!pedido || !pedido.producto) {
@@ -73,5 +74,43 @@ router.post("/facturas", async (req, res) => {
         res.status(500).json({ mensaje: "Error al generar factura" });
     }
 });
+
+
+// Ruta GET /facturas -> obtiene todas las facturas
+router.get("/facturas", async (req, res) => {
+    try {
+        const [facturas] = await db.execute(`
+            SELECT f.id_factura, f.id_pedido, f.fecha_emision, f.total, f.transporte_precio
+            FROM factura f
+            ORDER BY f.fecha_emision DESC
+        `);
+
+        res.json(facturas);
+    } catch (error) {
+        console.error("❌ Error al obtener facturas:", error.message);
+        res.status(500).json({ mensaje: "Error al obtener facturas" });
+    }
+});
+
+// Ruta GET /facturas/usuario/:id_cliente -> obtiene facturas de un usuario específico
+router.get("/facturas/usuario/:id_cliente", async (req, res) => {
+    const { id_cliente } = req.params;
+
+    try {
+        const [facturas] = await db.execute(`
+            SELECT f.id_factura, f.id_pedido, f.fecha_emision, f.total, f.transporte_precio
+            FROM factura f
+            JOIN pedido p ON f.id_pedido = p.id_pedido
+            WHERE p.id_cliente = ?
+            ORDER BY f.fecha_emision DESC
+        `, [id_cliente]);
+
+        res.json(facturas);
+    } catch (error) {
+        console.error("❌ Error al obtener facturas por usuario:", error.message);
+        res.status(500).json({ mensaje: "Error al obtener facturas por usuario" });
+    }
+});
+
 
 export default router;
