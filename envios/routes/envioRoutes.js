@@ -2,7 +2,6 @@ import express from "express";
 import mysql from "mysql2/promise";
 import dotenv from "dotenv";
 
-
 const router = express.Router();
 dotenv.config();
 
@@ -10,49 +9,54 @@ const db = await mysql.createConnection({
   host: process.env.DB_HOST || "localhost",
   user: process.env.DB_USER || "root",
   password: process.env.DB_PASSWORD || "",
-  database: process.env.DB_NAME || "logistica_transp",
+  database: process.env.DB_NAME || "plataforma_construventa",
   port: process.env.DB_PORT || 3306
 });
 
-// Obtener transportes disponibles para una zona
-router.get("/transportes/:zona", async (req, res) => {
-    const zona = req.params.zona;
-    const [filas] = await db.execute(`SELECT * FROM transportes WHERE zonas_disponibles LIKE ?`, [`%${zona}%`]);
+// Obtener TODOS los transportes (con peso_maximo)
+router.get("/transportes", async (req, res) => {
+  try {
+    const [filas] = await db.execute(`SELECT * FROM transportes`);
     res.json(filas);
+  } catch (error) {
+    console.error("❌ Error al obtener transportes:", error.message);
+    res.status(500).json({ mensaje: "Error al obtener transportes", error: error.message });
+  }
 });
 
+// Obtener transportes por zona (opcional si mantienes selector)
+router.get("/transportes/:zona", async (req, res) => {
+  const zona = req.params.zona;
+  const [filas] = await db.execute(`SELECT * FROM transportes WHERE zonas_disponibles LIKE ?`, [`%${zona}%`]);
+  res.json(filas);
+});
 
-// Registrar envío (lo llamas cuando pagas)
+// Registrar envío
 router.post("/envios", async (req, res) => {
-    const { id_pedido, direccion_entrega, zona_entrega, transporte_id } = req.body;
+  const { id_pedido, direccion_entrega, zona_entrega, transporte_id } = req.body;
 
-    console.log("📦 Body recibido:", req.body);
+  if (!id_pedido || !direccion_entrega || !transporte_id) {
+    return res.status(400).json({ mensaje: "Faltan campos requeridos" });
+  }
 
-    if (!id_pedido || !direccion_entrega || !transporte_id) {
-        console.log("⛔ Faltan campos requeridos:", { id_pedido, direccion_entrega, transporte_id });
-        return res.status(400).json({ mensaje: "Faltan campos requeridos" });
-    }
+  const fecha = new Date();
+  fecha.setDate(fecha.getDate() + 2);
+  const fecha_estimada = fecha.toISOString().split("T")[0];
 
-    const fecha = new Date();
-    fecha.setDate(fecha.getDate() + 2);
-    const fecha_estimada = fecha.toISOString().split("T")[0];
+  try {
+    await db.execute(`
+      INSERT INTO envios (id_pedido, direccion_entrega, transporte_id, estado, fecha_estimada, zona_entrega)
+      VALUES (?, ?, ?, 'pendiente', ?, ?)
+    `, [id_pedido, direccion_entrega, transporte_id, fecha_estimada, zona_entrega]);
 
-    try {
-        console.log("🚧 Intentando insertar en envíos...");
-        await db.execute(`
-            INSERT INTO envios (id_pedido, direccion_entrega, transporte_id, estado, fecha_estimada, zona_entrega)
-            VALUES (?, ?, ?, 'pendiente', ?, ?)
-        `, [id_pedido, direccion_entrega, transporte_id, fecha_estimada,zona_entrega]);
-
-        console.log("✅ Envío registrado exitosamente.");
-        res.json({ mensaje: "Envío registrado", id_pedido, fecha_estimada });
-    } catch (error) {
-        console.error("❌ Error al registrar el envío:", error.message);
-        res.status(500).json({ mensaje: "Error al registrar envío", error: error.message });
-    }
+    res.json({ mensaje: "Envío registrado", id_pedido, fecha_estimada });
+  } catch (error) {
+    console.error("❌ Error al registrar el envío:", error.message);
+    res.status(500).json({ mensaje: "Error al registrar envío", error: error.message });
+  }
 });
 
-// Obtener envíos por cliente
+// Obtener envíos por usuario
 router.get("/envios/usuario/:id_cliente", async (req, res) => {
   const { id_cliente } = req.params;
 
@@ -67,34 +71,25 @@ router.get("/envios/usuario/:id_cliente", async (req, res) => {
 
     res.json(filas);
   } catch (error) {
-    console.error("❌ Error al obtener envíos por usuario:", error.message);
+    console.error("❌ Error al obtener envíos:", error.message);
     res.status(500).json({ mensaje: "Error al obtener envíos", error: error.message });
   }
 });
 
-// 🟢 Simulación automática de cambio de estado
+// Simulación automática
 const estados = ["pendiente", "en tránsito", "entregado"];
-
 setInterval(async () => {
   try {
-    const [envios] = await db.execute(`
-      SELECT id_envio, estado FROM envios WHERE estado != 'entregado'
-    `);
-
+    const [envios] = await db.execute(`SELECT id_envio, estado FROM envios WHERE estado != 'entregado'`);
     for (const envio of envios) {
       const currentIndex = estados.indexOf(envio.estado);
       const nextEstado = estados[currentIndex + 1] || "entregado";
-
-      await db.execute(`
-        UPDATE envios SET estado = ? WHERE id_envio = ?
-      `, [nextEstado, envio.id_envio]);
-
+      await db.execute(`UPDATE envios SET estado = ? WHERE id_envio = ?`, [nextEstado, envio.id_envio]);
       console.log(`🔄 Estado de envío ${envio.id_envio} actualizado a '${nextEstado}'`);
     }
   } catch (error) {
     console.error("❌ Error en simulación automática:", error.message);
   }
-}, 10000); // cada 10 segundos
-
+}, 10000); // cada 10s
 
 export default router;
