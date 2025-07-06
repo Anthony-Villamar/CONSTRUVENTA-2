@@ -12,7 +12,7 @@
           <a href="compras.html">Tus Compras</a>
           <a href="seguimiento.html">Seguimiento de Envío</a>
           <a href="perfil.html">Perfil</a>
-            <a href="index.html">Log out</a>    </nav>
+            <a href="index.html" onclick="logout()">Log out</a>    </nav>
     </header>
     <main>
     <h2>Bienvenido al catálogo</h2>
@@ -53,7 +53,12 @@
     <!-- <script src="https://www.paypal.com/sdk/js?client-id=AV4r22dZ8VMXeJqCHU5-OHCTLbCFP-i7OHQ1-ubppjm_o2XwzbajGjuyJtEkD-fJNxLphSftUTAB5xfK&currency=USD"></script> -->
     
     <script src="https://www.paypal.com/sdk/js?client-id=AV4r22dZ8VMXeJqCHU5-OHCTLbCFP-i7OHQ1-ubppjm_o2XwzbajGjuyJtEkD-fJNxLphSftUTAB5xfK&currency=USD&disable-funding=card"></script>
-    
+    <script>
+    function logout() {
+      localStorage.clear();
+      window.location.href = "login.html";
+    }
+  </script>
     <script src="./logicaventa.js"></script>
 </body>
 </html>
