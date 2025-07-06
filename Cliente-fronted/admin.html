@@ -14,11 +14,25 @@
   </header>
 
   <main>
+    <h2>Registrar Nuevo Producto</h2>
+<form id="form-producto" onsubmit="registrarProducto(event)">
+  <input type="text" id="codigo" placeholder="Código" required><br>
+  <input type="text" id="nombre" placeholder="Nombre" required><br>
+  <input type="text" id="descripcion" placeholder="Descripción"><br>
+  <input type="text" id="categoria" placeholder="Categoría" required><br>
+  <input type="number" id="precio" placeholder="Precio" required><br>
+  <input type="number" id="stock" placeholder="Stock inicial" required><br>
+  <input type="number" id="peso" placeholder="Peso kg" required><br>
+  <button type="submit">Registrar</button>
+</form>
+
+<h2>Alertas de Inventario Bajo</h2>
+<div id="alertas-stock"></div>
+
+    
     <h2>Pedidos Pendientes de Transporte</h2>
     <div id="lista-pedidos"></div>
 
-    <h2>Alertas de Inventario Bajo</h2>
-    <div id="alertas-stock"></div>
   </main>
 
   <footer>
