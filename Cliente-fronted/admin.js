@@ -21,11 +21,15 @@ async function cargarPedidos() {
 }
 
 // ✅ Registrar nuevo producto
+// ✅ Registrar nuevo producto
 async function registrarProducto(event) {
   event.preventDefault();
 
-  const precio = parseFloat(document.getElementById("precio").value.replace(",", "."));
-  const peso_kg = parseFloat(document.getElementById("peso").value.replace(",", "."));
+  const precioInput = document.getElementById("precio").value.replace(",", ".");
+  const pesoInput = document.getElementById("peso").value.replace(",", ".");
+
+  const precio = parseFloat(parseFloat(precioInput).toFixed(2));
+  const peso_kg = parseFloat(parseFloat(pesoInput).toFixed(2));
 
   // Validaciones previas
   if (isNaN(precio) || isNaN(peso_kg)) {
@@ -61,6 +65,7 @@ async function registrarProducto(event) {
     alert("❌ Error al registrar producto.");
   }
 }
+
 
 // ✅ Listar productos con bajo stock y crear reabastecimiento
 async function cargarAlertasStock() {
