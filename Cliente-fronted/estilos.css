@@ -43,16 +43,18 @@ h2 {
 
 /* Tarjeta de producto */
 .producto {
-  background: #fff;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  text-align: center;
-  transition: transform 0.2s;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 300px;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    width: 300px;
+    text-align: center;
+    transition: transform 0.2s;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 350px;
 }
 
 .producto:hover {
@@ -65,7 +67,7 @@ h2 {
 }
 
 .producto .descripcion {
-  flex-grow: 1; /* ocupa el espacio disponible */
+  flex-grow: 1;
 }
 
 .producto p {
