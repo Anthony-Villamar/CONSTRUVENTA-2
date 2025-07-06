@@ -59,19 +59,19 @@ async function asignarTransporte(id_pedido, direccion, zona) {
 
 // ✅ Revisar alertas de stock bajo
 async function cargarAlertasStock() {
-  const res = await fetch("https://inventario-d5am.onrender.com/api/productos");
-  const productos = await res.json();
+  const res = await fetch("https://inventario-d5am.onrender.com/api/alerta-stock");
+  const data = await res.json();
+  const productos = data.productos; // tu respuesta tiene { mensaje, productos }
   const cont = document.getElementById("alertas-stock");
   cont.innerHTML = "";
 
   productos.forEach(p => {
-    if (p.stock < 15) {
-      const div = document.createElement("div");
-      div.innerHTML = `<p>⚠️ <b>${p.nombre}</b> stock bajo: ${p.stock}</p>`;
-      cont.appendChild(div);
-    }
+    const div = document.createElement("div");
+    div.innerHTML = `<p>⚠️ <b>${p.nombre}</b> stock bajo: ${p.stock}</p>`;
+    cont.appendChild(div);
   });
 }
+
 
 // ✅ Inicializar
 (async () => {
