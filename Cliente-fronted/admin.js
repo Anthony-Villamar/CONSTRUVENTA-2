@@ -25,14 +25,15 @@ async function registrarProducto(event) {
   event.preventDefault();
 
   const data = {
-    codigo_producto: document.getElementById("codigo").value,
-    nombre: document.getElementById("nombre").value,
-    descripcion: document.getElementById("descripcion").value,
-    categoria: document.getElementById("categoria").value,
-    precio: parseFloat(document.getElementById("precio").value),
-    stock: parseInt(document.getElementById("stock").value),
-    peso_kg: parseFloat(document.getElementById("peso").value),
-  };
+  codigo_producto: document.getElementById("codigo").value,
+  nombre: document.getElementById("nombre").value,
+  descripcion: document.getElementById("descripcion").value,
+  categoria: document.getElementById("categoria").value,
+  precio: parseFloat(document.getElementById("precio").value.replace(",", ".")),
+  stock: parseInt(document.getElementById("stock").value),
+  peso_kg: parseFloat(document.getElementById("peso").value.replace(",", ".")),
+};
+
 
   const res = await fetch("https://inventario-d5am.onrender.com/api/productos", {
     method: "POST",
