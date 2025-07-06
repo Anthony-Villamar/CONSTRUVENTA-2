@@ -24,16 +24,26 @@ async function cargarPedidos() {
 async function registrarProducto(event) {
   event.preventDefault();
 
-  const data = {
-  codigo_producto: document.getElementById("codigo").value,
-  nombre: document.getElementById("nombre").value,
-  descripcion: document.getElementById("descripcion").value,
-  categoria: document.getElementById("categoria").value,
-  precio: parseFloat(document.getElementById("precio").value.replace(",", ".")),
-  stock: parseInt(document.getElementById("stock").value),
-  peso_kg: parseFloat(document.getElementById("peso").value.replace(",", ".")),
-};
+  const precio = parseFloat(document.getElementById("precio").value.replace(",", "."));
+  const peso_kg = parseFloat(document.getElementById("peso").value.replace(",", "."));
 
+  // Validaciones previas
+  if (isNaN(precio) || isNaN(peso_kg)) {
+    alert("❌ Precio o peso inválido.");
+    return;
+  }
+
+  const data = {
+    codigo_producto: document.getElementById("codigo").value,
+    nombre: document.getElementById("nombre").value,
+    descripcion: document.getElementById("descripcion").value,
+    categoria: document.getElementById("categoria").value,
+    precio: precio,
+    stock: parseInt(document.getElementById("stock").value),
+    peso_kg: peso_kg,
+  };
+
+  console.log("🔎 Registrando producto:", data);
 
   const res = await fetch("https://inventario-d5am.onrender.com/api/productos", {
     method: "POST",
@@ -46,6 +56,8 @@ async function registrarProducto(event) {
     document.getElementById("form-producto").reset();
     cargarAlertasStock();
   } else {
+    const err = await res.text();
+    console.error("❌ Error al registrar producto:", err);
     alert("❌ Error al registrar producto.");
   }
 }
@@ -87,10 +99,8 @@ async function reabastecerProducto(codigo) {
   }
 }
 
-
 // ✅ Inicializar
 (async () => {
   await cargarAlertasStock();
   await cargarPedidos();
 })();
-
