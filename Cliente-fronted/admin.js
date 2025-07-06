@@ -20,6 +20,12 @@
 //   });
 // }
 
+const admin_id = localStorage.getItem("cedula");
+if (!admin_id) {
+  window.location.href = "login.html";
+}
+
+
 // ✅ Registrar nuevo producto
 async function registrarProducto(event) {
   event.preventDefault();
