@@ -86,6 +86,29 @@ async function registrarProducto(event) {
   }
 }
 
+async function actualizarProducto(codigo) {
+  const nuevoPrecio = prompt("Nuevo precio:");
+  const nuevaDescripcion = prompt("Nueva descripción:");
+
+  const data = {
+    precio: parseFloat(nuevoPrecio),
+    descripcion: nuevaDescripcion
+  };
+
+  const res = await fetch(`https://inventario-d5am.onrender.com/api/productos/${codigo}`, {
+    method: "PUT",
+    body: JSON.stringify(data),
+    headers: { "Content-Type": "application/json" }
+  });
+
+  if (res.ok) {
+    alert("✅ Producto actualizado correctamente.");
+    cargarProductos(); // recarga lista
+  } else {
+    alert("❌ Error al actualizar producto.");
+  }
+}
+
 
 // async function registrarProducto(event) {
 //   event.preventDefault();
