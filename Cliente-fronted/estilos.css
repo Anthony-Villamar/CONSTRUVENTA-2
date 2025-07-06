@@ -91,6 +91,7 @@ h2 {
   cursor: pointer;
   width: 100%;
   font-weight: bold;
+    margin-top: auto;
 }
 
 .producto button:hover {
