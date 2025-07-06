@@ -18,13 +18,13 @@ async function cargarProductos() {
           <p class="card-text">${producto.descripcion}</p>
           <p class="card-text"><strong>Precio:</strong> $${producto.precio}</p>
           <p class="card-text"><strong>Stock:</strong> ${producto.stock}</p>
-          <input type="number" class="form-control mb-2" value="1" min="1" max="${producto.stock}" id="cantidad-${producto.id}">
-          <button class="btn btn-success w-100" onclick="agregarAlCarrito('${producto.id}')">Agregar</button>
+          <input type="number" class="form-control mb-2" value="1" min="1" max="${producto.stock}" id="cantidad_${producto.codigo}">
+          <button class="btn btn-success w-100" onclick="agregarProducto('${producto.codigo}', '${producto.nombre}', ${producto.precio}, ${producto.peso}, ${producto.stock})">Agregar</button>
         </div>
       </div>
     </div>
   `;
-  document.getElementById("productos").innerHTML += card;
+  contenedor.innerHTML += card;
 });
 }
 
