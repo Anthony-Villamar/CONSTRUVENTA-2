@@ -25,6 +25,34 @@ if (!admin_id) {
   window.location.href = "index.html";
 }
 
+async function cargarProductos() {
+  const res = await fetch("https://inventario-d5am.onrender.com/api/productos");
+  const productos = await res.json();
+  const cont = document.getElementById("lista-productos");
+  cont.innerHTML = "";
+
+  productos.forEach(p => {
+    const div = document.createElement("div");
+    div.className = "col-md-4 mb-3";
+    div.innerHTML = `
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title">${p.nombre}</h5>
+          <p class="card-text">${p.descripcion}</p>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item"><b>Código:</b> ${p.codigo_producto}</li>
+            <li class="list-group-item"><b>Categoría:</b> ${p.categoria}</li>
+            <li class="list-group-item"><b>Precio:</b> $${p.precio}</li>
+            <li class="list-group-item"><b>Stock:</b> ${p.stock}</li>
+            <li class="list-group-item"><b>Peso:</b> ${p.peso_kg} kg</li>
+          </ul>
+        </div>
+      </div>
+    `;
+    cont.appendChild(div);
+  });
+}
+
 
 // ✅ Registrar nuevo producto
 async function registrarProducto(event) {
@@ -112,5 +140,6 @@ async function reabastecerProducto(codigo) {
 // ✅ Inicializar
 (async () => {
   await cargarAlertasStock();
+  await cargarProductos();
   // await cargarPedidos();
 })();
