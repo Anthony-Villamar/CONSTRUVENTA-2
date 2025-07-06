@@ -43,6 +43,15 @@
       window.location.href = "login.html";
     }
   </script>
+  <script>
+  window.addEventListener("pageshow", function (event) {
+    if (event.persisted) {
+      // Si la página viene de cache (por el botón atrás)
+      window.location.reload();
+    }
+  });
+</script>
+
   <script src="admin.js"></script>
 </body>
 </html>
