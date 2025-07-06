@@ -9,23 +9,19 @@ async function cargarProductos() {
   const productos = await res.json();
   const contenedor = document.getElementById("productos");
   contenedor.innerHTML = "";
- productos.forEach(producto => {
-  const card = `
-    <div class="col-md-4 mb-4">
-      <div class="card h-100">
-        <div class="card-body">
-          <h5 class="card-title">${producto.nombre}</h5>
-          <p class="card-text">${producto.descripcion}</p>
-          <p class="card-text"><strong>Precio:</strong> $${producto.precio}</p>
-          <p class="card-text"><strong>Stock:</strong> ${producto.stock}</p>
-          <input type="number" class="form-control mb-2" value="1" min="1" max="${producto.stock}" id="cantidad_${producto.codigo}">
-          <button class="btn btn-success w-100" onclick="agregarProducto('${producto.codigo}', '${producto.nombre}', ${producto.precio}, ${producto.peso}, ${producto.stock})">Agregar</button>
-        </div>
-      </div>
-    </div>
-  `;
-  contenedor.innerHTML += card;
-});
+  productos.forEach(p => {
+    const div = document.createElement("div");
+    div.className = "producto";
+    div.innerHTML = `
+      <h4>${p.nombre}</h4>
+      <p>${p.descripcion}</p>
+      <p><b>Precio:</b> $${p.precio}</p>
+      <p><b>Stock:</b> ${p.stock}</p>
+      <input type="number" id="cantidad_${p.codigo_producto}" value="1" min="1" max="${p.stock}" style="width:60px;">
+      <button onclick='agregarProducto("${p.codigo_producto}", "${p.nombre}", ${p.precio}, ${p.peso_kg}, ${p.stock})'>Agregar</button>
+    `;
+    contenedor.appendChild(div);
+  });
 }
 
 function agregarProducto(codigo, nombre, precio, peso, stock) {
