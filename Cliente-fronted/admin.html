@@ -2,27 +2,27 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Panel de Administrador</title>
+  <title>Panel Administrador</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <header>
-    <h1>Panel de Administrador</h1>
+    <nav>
+      <a href="admin.html">Inicio Admin</a>
+      <a href="index.html">Log out</a>
+    </nav>
   </header>
 
   <main>
-    <section>
-      <h2>Pedidos que requieren transporte</h2>
-      <div id="pedidos-transporte"></div>
-    </section>
+    <h2>Pedidos Pendientes de Transporte</h2>
+    <div id="lista-pedidos"></div>
 
-    <section>
-      <h2>Alertas de Stock Bajo</h2>
-      <div id="alertas-stock"></div>
-    </section>
+    <h2>Alertas de Inventario Bajo</h2>
+    <div id="alertas-stock"></div>
   </main>
 
   <footer>
-    <p>© 2025 ConstruVenta. Todos los derechos reservados.</p>
+    <p>© 2025 ConstruVenta Admin</p>
   </footer>
 
   <script src="admin.js"></script>
