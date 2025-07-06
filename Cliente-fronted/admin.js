@@ -57,23 +57,36 @@ async function asignarTransporte(id_pedido, direccion, zona) {
   }
 }
 
-// ✅ Cargar alertas de stock bajo
+// ✅ Revisar alertas de stock bajo
 async function cargarAlertasStock() {
-  const res = await fetch("https://inventario-d5am.onrender.com/api/alerta-stock");
-  const data = await res.json();
-  const productos = data.productos;
-  const cont = document.getElementById("alertas-stock");
-  cont.innerHTML = "";
+  try {
+    const res = await fetch("https://inventario-d5am.onrender.com/api/alerta-stock");
+    const data = await res.json();
+    const productos = data.productos; // se ajusta según respuesta PHP
 
-  productos.forEach(p => {
-    const div = document.createElement("div");
-    div.innerHTML = `<p>⚠️ <b>${p.nombre}</b> stock bajo: ${p.stock}</p>`;
-    cont.appendChild(div);
-  });
+    const cont = document.getElementById("alertas-stock");
+    cont.innerHTML = "";
+
+    if (productos.length === 0) {
+      cont.innerHTML = "<p>✅ No hay productos con stock bajo.</p>";
+      return;
+    }
+
+    productos.forEach(p => {
+      const div = document.createElement("div");
+      div.innerHTML = `<p>⚠️ <b>${p.nombre}</b> stock bajo: ${p.stock}</p>`;
+      cont.appendChild(div);
+    });
+
+  } catch (error) {
+    console.error("❌ Error al cargar alertas de stock:", error);
+    const cont = document.getElementById("alertas-stock");
+    cont.innerHTML = "<p>❌ Error al cargar alertas de stock.</p>";
+  }
 }
 
-// ✅ Inicializar
+// ✅ Inicializar solo alertas por ahora
 (async () => {
-  await cargarPedidos();
   await cargarAlertasStock();
+  await cargarPedidos();
 })();
