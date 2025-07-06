@@ -32,6 +32,7 @@ async function cargarEnvios() {
       <p>Zona: ${e.zona_entrega}</p>
       <p>Estado: <strong>${e.estado}</strong></p>
       <p>Fecha estimada de entrega: ${e.fecha_estimada}</p>
+      <hr>
     `;
     lista.appendChild(div);
   });
