@@ -2,37 +2,36 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Registro de Cliente</title>
+    <title>Perfil del Cliente</title>
 </head>
 <body>
-    <h2>Actualizar Datos del Cliente</h2>
+    <h2>Perfil del Cliente</h2>
 
-    <form id="formulario">
-        <input type="text" id="cedula" placeholder="Cédula" required maxlength="10" pattern="\d{10}" title="Solo números, exactamente 10 dígitos"><br>
-        <input type="text" id="nombre" placeholder="Nombre" required><br>
-        <input type="text" id="apellido" placeholder="Apellido" required><br>
-<input type="text" id="telefono" placeholder="Teléfono" required maxlength="10" pattern="\d{7,10}" title="Solo números, entre 7 y 10 dígitos"><br>
-        <input type="text" id="direccion" placeholder="Dirección" required><br>
+    <form id="perfil-form">
+        <input type="text" id="cedula" placeholder="Cédula" readonly><br>
+        <input type="text" id="nombre" placeholder="Nombre" ><br>
+        <input type="text" id="apellido" placeholder="Apellido" ><br>
+        <input type="text" id="telefono" placeholder="Teléfono"  maxlength="10" pattern="\d{7,10}" title="Solo números, entre 7 y 10 dígitos"><br>
+        <input type="text" id="direccion" placeholder="Dirección" ><br>
+        
         <label for="zona">Zona:</label><br>
-<select id="zona" required>
-    <option value="" disabled selected>Selecciona una zona</option>
-    <option value="norte">Norte</option>
-    <option value="centro">Centro</option>
-    <option value="sur">Sur</option>
-    <option value="este">Este</option>
-    <option value="oeste">Oeste</option>
-</select><br>
+        <select id="zona" required>
+            <option value="" disabled selected>Selecciona una zona</option>
+            <option value="norte">Norte</option>
+            <option value="centro">Centro</option>
+            <option value="sur">Sur</option>
+            <option value="este">Este</option>
+            <option value="oeste">Oeste</option>
+        </select><br>
 
         <input type="email" id="email" placeholder="Correo (debe ser @gmail.com)" required><br>
         <input type="password" id="password" placeholder="Contraseña" required><br>
 
-        <button type="submit">Registrar</button>
+        <button type="submit">Actualizar</button>
     </form>
 
-    <br><a href="index.html">Ir a Login</a>
+    <br><a href="index.html">Volver al inicio</a>
 
-    <script>
-        
-    </script>
+    <script src="perfil.js"></script>
 </body>
 </html>
