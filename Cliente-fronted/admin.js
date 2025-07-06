@@ -22,7 +22,7 @@
 
 const admin_id = localStorage.getItem("cedula");
 if (!admin_id) {
-  window.location.href = "login.html";
+  window.location.href = "index.html";
 }
 
 
