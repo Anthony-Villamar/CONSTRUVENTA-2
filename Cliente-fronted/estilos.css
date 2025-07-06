@@ -73,13 +73,15 @@ h2 {
 }
 /* Input cantidad */
 .producto input[type="number"] {
-  width: 60px;
+  width: 80px; /* o más si prefieres */
   padding: 5px;
-  margin: 10px 0;
+  margin: 10px auto; /* centrado horizontal */
   text-align: center;
   border: 1px solid #ccc;
   border-radius: 4px;
+  display: block; /* asegura que respete el margin auto */
 }
+
 
 /* Botón agregar */
 .producto button {
