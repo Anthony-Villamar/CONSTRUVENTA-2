@@ -20,73 +20,75 @@ async function cargarPedidos() {
   });
 }
 
-// ✅ Asignar transporte
-async function asignarTransporte(id_pedido, direccion, zona) {
-  const resT = await fetch("https://construventa-2-1.onrender.com/transportes");
-  const transportes = await resT.json();
+// ✅ Listar productos con bajo stock y crear reabastecimiento
+async function cargarAlertasStock() {
+  const res = await fetch("https://inventario-d5am.onrender.com/api/alerta-stock");
+  const data = await res.json();
+  const productos = data.productos;
+  const cont = document.getElementById("alertas-stock");
+  cont.innerHTML = "";
 
-  const seleccionado = prompt(
-    "Selecciona ID de transporte:\n" + 
-    transportes.map(t => `${t.id}: ${t.nombre} (${t.capacidad_max_kg}kg $${t.precio})`).join("\n")
-  );
+  productos.forEach(p => {
+    const div = document.createElement("div");
+    div.innerHTML = `
+      <p>⚠️ <b>${p.nombre}</b> stock bajo: ${p.stock}</p>
+      <button onclick="reabastecerProducto('${p.codigo_producto}')">Reabastecer</button>
+    `;
+    cont.appendChild(div);
+  });
+}
 
-  if (!seleccionado) return;
+// ✅ Reabastecer producto
+async function reabastecerProducto(codigo) {
+  const cantidad = prompt("Ingrese cantidad para reabastecer:", "20");
+  if (!cantidad) return;
 
-  const transporte = transportes.find(t => t.id == seleccionado);
-  if (!transporte) {
-    alert("Transporte inválido.");
-    return;
-  }
-
-  const envioRes = await fetch("https://construventa-2-1.onrender.com/envios", {
-    method: "POST",
+  const res = await fetch(`https://inventario-d5am.onrender.com/api/productos/${codigo}/existencias`, {
+    method: "PUT",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      id_pedido,
-      direccion_entrega: direccion,
-      zona_entrega: zona,
-      transporte_id: transporte.id
-    })
+    body: JSON.stringify({ cantidad: -cantidad }) // negativo para sumar stock
   });
 
-  if (envioRes.ok) {
-    alert("✅ Transporte asignado y envío registrado.");
-    cargarPedidos(); // recarga lista
+  if (res.ok) {
+    alert("✅ Producto reabastecido correctamente.");
+    cargarAlertasStock();
   } else {
-    alert("❌ Error al registrar envío.");
+    alert("❌ Error al reabastecer producto.");
   }
 }
 
-// ✅ Revisar alertas de stock bajo
-async function cargarAlertasStock() {
-  try {
-    const res = await fetch("https://inventario-d5am.onrender.com/api/alerta-stock");
-    const data = await res.json();
-    const productos = data.productos; // se ajusta según respuesta PHP
+// ✅ Registrar nuevo producto
+async function registrarProducto(event) {
+  event.preventDefault();
 
-    const cont = document.getElementById("alertas-stock");
-    cont.innerHTML = "";
+  const data = {
+    codigo_producto: document.getElementById("codigo").value,
+    nombre: document.getElementById("nombre").value,
+    descripcion: document.getElementById("descripcion").value,
+    categoria: document.getElementById("categoria").value,
+    precio: parseFloat(document.getElementById("precio").value),
+    stock: parseInt(document.getElementById("stock").value),
+    peso_kg: parseFloat(document.getElementById("peso").value),
+  };
 
-    if (productos.length === 0) {
-      cont.innerHTML = "<p>✅ No hay productos con stock bajo.</p>";
-      return;
-    }
+  const res = await fetch("https://inventario-d5am.onrender.com/api/productos", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  });
 
-    productos.forEach(p => {
-      const div = document.createElement("div");
-      div.innerHTML = `<p>⚠️ <b>${p.nombre}</b> stock bajo: ${p.stock}</p>`;
-      cont.appendChild(div);
-    });
-
-  } catch (error) {
-    console.error("❌ Error al cargar alertas de stock:", error);
-    const cont = document.getElementById("alertas-stock");
-    cont.innerHTML = "<p>❌ Error al cargar alertas de stock.</p>";
+  if (res.ok) {
+    alert("✅ Producto registrado.");
+    document.getElementById("form-producto").reset();
+    cargarAlertasStock();
+  } else {
+    alert("❌ Error al registrar producto.");
   }
 }
 
-// ✅ Inicializar solo alertas por ahora
+// ✅ Inicializar
 (async () => {
   await cargarAlertasStock();
   await cargarPedidos();
 })();
+
