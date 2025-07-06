@@ -51,10 +51,10 @@ h2 {
   width: 300px;
   text-align: center;
   transition: transform 0.2s;
-  
+
   display: flex;
   flex-direction: column;
-  
+  justify-content: space-between; /* clave para distribuir el contenido */
   height: 350px;
 }
 
@@ -67,21 +67,24 @@ h2 {
   font-size: 1.2em;
 }
 
+.producto .descripcion {
+  flex-grow: 1; /* ocupa el espacio disponible */
+}
+
 .producto p {
   margin: 5px 0;
-  flex-grow: 1;
 }
+
 /* Input cantidad */
 .producto input[type="number"] {
-  width: 80px; /* o más si prefieres */
+  width: 80px;
   padding: 5px;
   margin: 10px auto; /* centrado horizontal */
   text-align: center;
   border: 1px solid #ccc;
   border-radius: 4px;
-  display: block; /* asegura que respete el margin auto */
+  display: block;
 }
-
 
 /* Botón agregar */
 .producto button {
@@ -93,8 +96,6 @@ h2 {
   cursor: pointer;
   width: 100%;
   font-weight: bold;
-
-  margin-top: auto;
 }
 
 .producto button:hover {
