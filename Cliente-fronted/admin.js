@@ -36,6 +36,7 @@ async function cargarProductos() {
     div.className = "col-md-4 mb-3";
     div.innerHTML = `
       <div class="card h-100">
+        <img src="${p.imagen_url}" class="card-img-top" alt="Imagen de ${p.nombre}">
         <div class="card-body">
           <h5 class="card-title">${p.nombre}</h5>
           <p class="card-text">${p.descripcion}</p>
