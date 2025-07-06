@@ -5,7 +5,7 @@ async function cargarPedidos() {
   const cont = document.getElementById("lista-pedidos");
   cont.innerHTML = "";
 
-  for (const p of pedidos) {
+  pedidos.forEach(p => {
     const div = document.createElement("div");
     div.innerHTML = `
       <p><b>ID Pedido:</b> ${p.id_pedido}</p>
@@ -17,10 +17,10 @@ async function cargarPedidos() {
       <hr>
     `;
     cont.appendChild(div);
-  }
+  });
 }
 
-// ✅ Asignar transporte a un pedido
+// ✅ Asignar transporte
 async function asignarTransporte(id_pedido, direccion, zona) {
   const resT = await fetch("https://construventa-2-1.onrender.com/transportes");
   const transportes = await resT.json();
@@ -57,11 +57,11 @@ async function asignarTransporte(id_pedido, direccion, zona) {
   }
 }
 
-// ✅ Revisar alertas de stock bajo
+// ✅ Cargar alertas de stock bajo
 async function cargarAlertasStock() {
   const res = await fetch("https://inventario-d5am.onrender.com/api/alerta-stock");
   const data = await res.json();
-  const productos = data.productos; // tu respuesta tiene { mensaje, productos }
+  const productos = data.productos;
   const cont = document.getElementById("alertas-stock");
   cont.innerHTML = "";
 
@@ -71,7 +71,6 @@ async function cargarAlertasStock() {
     cont.appendChild(div);
   });
 }
-
 
 // ✅ Inicializar
 (async () => {
