@@ -8,7 +8,7 @@
   <header>
     <nav>
       <a href="admin.html">Inicio Admin</a>
-      <a href="index.html">Log out</a>
+      <a href="index.html" onclick="logout()">Log out</a>
     </nav>
   </header>
 
@@ -37,7 +37,12 @@
   <footer>
     <p>© 2025 ConstruVenta Admin</p>
   </footer>
-
+  <script>
+    function logout() {
+      localStorage.clear();
+      window.location.href = "login.html";
+    }
+  </script>
   <script src="admin.js"></script>
 </body>
 </html>
