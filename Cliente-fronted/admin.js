@@ -39,24 +39,6 @@ async function reabastecerProducto(codigo) {
   }
 }
 
-// ✅ Reabastecer producto
-async function reabastecerProducto(codigo) {
-  const cantidad = prompt("Ingrese cantidad para reabastecer:", "20");
-  if (!cantidad) return;
-
-  const res = await fetch(`https://inventario-d5am.onrender.com/api/productos/${codigo}/existencias`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ cantidad: -cantidad }) // negativo para sumar stock
-  });
-
-  if (res.ok) {
-    alert("✅ Producto reabastecido correctamente.");
-    cargarAlertasStock();
-  } else {
-    alert("❌ Error al reabastecer producto.");
-  }
-}
 
 // ✅ Registrar nuevo producto
 async function registrarProducto(event) {
