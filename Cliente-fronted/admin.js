@@ -20,26 +20,6 @@ async function cargarPedidos() {
   });
 }
 
-// ✅ Listar productos con bajo stock y crear reabastecimiento
-async function reabastecerProducto(codigo) {
-  const cantidad = prompt("Ingrese cantidad para reabastecer:", "20");
-  if (!cantidad) return;
-
-  const res = await fetch(`https://inventario-d5am.onrender.com/api/productos/${codigo}/reabastecer`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ cantidad: parseInt(cantidad) })
-  });
-
-  if (res.ok) {
-    alert("✅ Producto reabastecido correctamente.");
-    cargarAlertasStock();
-  } else {
-    alert("❌ Error al reabastecer producto.");
-  }
-}
-
-
 // ✅ Registrar nuevo producto
 async function registrarProducto(event) {
   event.preventDefault();
@@ -68,6 +48,44 @@ async function registrarProducto(event) {
     alert("❌ Error al registrar producto.");
   }
 }
+
+// ✅ Listar productos con bajo stock y crear reabastecimiento
+async function cargarAlertasStock() {
+  const res = await fetch("https://inventario-d5am.onrender.com/api/alerta-stock");
+  const data = await res.json();
+  const productos = data.productos;
+  const cont = document.getElementById("alertas-stock");
+  cont.innerHTML = "";
+
+  productos.forEach(p => {
+    const div = document.createElement("div");
+    div.innerHTML = `
+      <p>⚠️ <b>${p.nombre}</b> stock bajo: ${p.stock}</p>
+      <button onclick="reabastecerProducto('${p.codigo_producto}')">Reabastecer</button>
+    `;
+    cont.appendChild(div);
+  });
+}
+
+// ✅ Reabastecer producto
+async function reabastecerProducto(codigo) {
+  const cantidad = prompt("Ingrese cantidad para reabastecer:", "20");
+  if (!cantidad) return;
+
+  const res = await fetch(`https://inventario-d5am.onrender.com/api/productos/${codigo}/reabastecer`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ cantidad: parseInt(cantidad) })
+  });
+
+  if (res.ok) {
+    alert("✅ Producto reabastecido correctamente.");
+    cargarAlertasStock();
+  } else {
+    alert("❌ Error al reabastecer producto.");
+  }
+}
+
 
 // ✅ Inicializar
 (async () => {
