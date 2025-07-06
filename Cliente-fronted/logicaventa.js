@@ -11,19 +11,14 @@ async function cargarProductos() {
   contenedor.innerHTML = "";
  productos.forEach(p => {
     const div = document.createElement("div");
-    div.className = "col-md-4 mb-4"; // Usa columnas Bootstrap
-
+    div.className = "producto";
     div.innerHTML = `
-      <div class="card h-100">
-        <div class="card-body">
-          <h5 class="card-title">${p.nombre}</h5>
-          <p class="card-text">${p.descripcion}</p>
-          <p class="card-text"><strong>Precio:</strong> $${p.precio}</p>
-          <p class="card-text"><strong>Stock:</strong> ${p.stock}</p>
-          <input type="number" id="cantidad_${p.codigo_producto}" value="1" min="1" max="${p.stock}" class="form-control mb-2" style="width:100px;">
-          <button onclick='agregarProducto("${p.codigo_producto}", "${p.nombre}", ${p.precio}, ${p.peso_kg})' class="btn btn-success w-100">Agregar</button>
-        </div>
-      </div>
+      <h4>${p.nombre}</h4>
+      <p>${p.descripcion}</p>
+      <p><b>Precio:</b> $${p.precio}</p>
+      <p><b>Stock:</b> ${p.stock}</p>
+      <input type="number" id="cantidad_${p.codigo_producto}" value="1" min="1" max="${p.stock}" style="width:60px;">
+      <button onclick='agregarProducto("${p.codigo_producto}", "${p.nombre}", ${p.precio}, ${p.peso_kg}, ${p.stock})'>Agregar</button>
     `;
     contenedor.appendChild(div);
   });
