@@ -20,7 +20,7 @@
           <li class="nav-item"><a class="nav-link active" href="compras.html">Tus Compras</a></li>
           <li class="nav-item"><a class="nav-link" href="seguimiento.html">Seguimiento de Envío</a></li>
           <li class="nav-item"><a class="nav-link" href="perfil.html">Perfil</a></li>
-          <li class="nav-item"><a class="nav-link" href="index.html">Log out</a></li>
+          <li class="nav-item"><a class="nav-link" href="index.html" onclick="logout()">Log out</a></li>
         </ul>
       </div>
     </div>
@@ -57,5 +57,11 @@
   </footer>
 
   <script src="compras.js"></script>
+  <script>
+    function logout() {
+        localStorage.clear();
+        window.location.href = "login.html";
+      }
+  </script>
 </body>
 </html>
