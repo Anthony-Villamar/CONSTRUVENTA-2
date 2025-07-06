@@ -14,11 +14,13 @@ async function cargarProductos() {
     div.className = "producto";
     div.innerHTML = `
       <h4>${p.nombre}</h4>
-      <p>${p.descripcion}</p>
-      <p><b>Precio:</b> $${p.precio}</p>
-      <p><b>Stock:</b> ${p.stock}</p>
-      <input type="number" id="cantidad_${p.codigo_producto}" value="1" min="1" max="${p.stock}" style="width:60px;">
-      <button onclick='agregarProducto("${p.codigo_producto}", "${p.nombre}", ${p.precio}, ${p.peso_kg}, ${p.stock})'>Agregar</button>
+      <div class="descripcion">
+        <p>${p.descripcion}</p>
+        <p><b>Precio:</b> $${p.precio}</p>
+        <p><b>Stock:</b> ${p.stock}</p>
+      </div>
+      <input type="number" id="cantidad_${p.codigo_producto}" value="1" min="1" max="${p.stock}">
+      <button onclick="agregarProducto('${p.codigo_producto}', '${p.nombre}', ${p.precio}, ${p.peso_kg}, ${p.stock})">Agregar</button>
     `;
     contenedor.appendChild(div);
   });
