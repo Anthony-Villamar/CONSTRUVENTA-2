@@ -13,7 +13,7 @@ const db = await mysql.createConnection({
   port: process.env.DB_PORT || 3306
 });
 
-// Obtener TODOS los transportes (con peso_maximo)
+// Obtener TODOS los transportes
 router.get("/transportes", async (req, res) => {
   try {
     const [filas] = await db.execute(`SELECT * FROM transportes`);
@@ -24,7 +24,7 @@ router.get("/transportes", async (req, res) => {
   }
 });
 
-// Obtener transportes por zona (opcional si mantienes selector)
+// Obtener transportes por zona
 router.get("/transportes/:zona", async (req, res) => {
   const zona = req.params.zona;
   const [filas] = await db.execute(`SELECT * FROM transportes WHERE zonas_disponibles LIKE ?`, [`%${zona}%`]);
@@ -90,6 +90,6 @@ setInterval(async () => {
   } catch (error) {
     console.error("❌ Error en simulación automática:", error.message);
   }
-}, 10000); // cada 10s
+}, 45000);
 
 export default router;
