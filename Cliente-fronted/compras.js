@@ -91,7 +91,9 @@ async function listarCompras() {
         <p><b>Fecha:</b> ${fechaHora}</p>
         <p><b>Productos:</b></p>
         <ul>
-          ${grupo.map(p => `<li>${p.producto} x ${p.cantidad}</li>`).join("")}
+          <!--${grupo.map(p => `<li>${p.producto} x ${p.cantidad}</li>`).join("")}-->
+          ${grupo.map(p => `<li>${p.nombre_producto} x ${p.cantidad}</li>`).join("")}
+          
         </ul>
         <hr>
       `;
