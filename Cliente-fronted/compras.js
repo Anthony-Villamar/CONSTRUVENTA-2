@@ -56,7 +56,6 @@ async function listarCompras() {
   const fecha_fin = document.getElementById("fecha_fin").value;
 
   let url = `https://construventa-3.onrender.com/api/pedidos/usuario/${usuario_id}`;
-
   if (fecha_inicio && fecha_fin) {
     url += `?fecha_inicio=${fecha_inicio}&fecha_fin=${fecha_fin}`;
   }
@@ -73,42 +72,37 @@ async function listarCompras() {
       return;
     }
 
-    // ✅ Agrupar productos por id_pedido
-    const pedidosAgrupados = {};
-    pedidos.forEach(pedido => {
-      if (!pedidosAgrupados[pedido.id_pedido]) {
-        pedidosAgrupados[pedido.id_pedido] = {
-          fecha: pedido.fecha_pedido,
-          productos: []
-        };
+    // 🔥 Agrupar por fecha_pedido (sin segundos)
+    const agrupados = {};
+    pedidos.forEach(p => {
+      const fechaHora = p.fecha_pedido.slice(0, 16); // yyyy-mm-dd HH:MM
+      if (!agrupados[fechaHora]) {
+        agrupados[fechaHora] = [];
       }
-      pedidosAgrupados[pedido.id_pedido].productos.push({
-        codigo: pedido.producto,
-        cantidad: pedido.cantidad
-      });
+      agrupados[fechaHora].push(p);
     });
 
-    // ✅ Mostrar pedidos agrupados
-    for (const id_pedido in pedidosAgrupados) {
-      const data = pedidosAgrupados[id_pedido];
+    // 🔥 Mostrar agrupados
+    Object.keys(agrupados).forEach(fechaHora => {
+      const grupo = agrupados[fechaHora];
 
       const div = document.createElement("div");
       div.innerHTML = `
-        <p><b>ID Pedido:</b> ${id_pedido}</p>
-        <p><b>Fecha:</b> ${data.fecha}</p>
+        <p><b>Fecha:</b> ${fechaHora}</p>
         <p><b>Productos:</b></p>
         <ul>
-          ${data.productos.map(p => `<li>${p.codigo} x ${p.cantidad}</li>`).join("")}
+          ${grupo.map(p => `<li>${p.producto} x ${p.cantidad}</li>`).join("")}
         </ul>
         <hr>
       `;
       contenedor.appendChild(div);
-    }
+    });
 
   } catch (error) {
     console.error("❌ Error al listar compras:", error);
   }
 }
+
 
 document.getElementById("filtro-fechas").addEventListener("submit", function(e){
   e.preventDefault();
