@@ -39,12 +39,12 @@ router.post("/envios", async (req, res) => {
     return res.status(400).json({ mensaje: "Faltan campos requeridos" });
   }
 
-  // const fecha = new Date();
-  // fecha.setDate(fecha.getDate() + 2);
-  // const fecha_estimada = fecha.toISOString().split("T")[0];
   const fecha = new Date();
-const fecha_estimada = fecha.toLocaleDateString("sv-SE"); // formato YYYY-MM-DD
-console.log(fecha_estimada);
+  fecha.setDate(fecha.getDate() + 2);
+  const fecha_estimada = fecha.toISOString().split("T")[0];
+//   const fecha = new Date();
+// const fecha_estimada = fecha.toLocaleDateString("sv-SE"); // formato YYYY-MM-DD
+// console.log(fecha_estimada);
 
 
   try {
