@@ -89,7 +89,7 @@ router.get("/facturas", async (req, res) => {
         res.json(facturas);
     } catch (error) {
         console.error("❌ Error al obtener facturas:", error.message);
-        res.status(500).json({ mensaje: "Error al obtener facturas", error.message });
+        res.status(500).json({ mensaje: "Error al obtener facturas" });
     }
 });
 
