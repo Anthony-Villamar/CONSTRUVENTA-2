@@ -13,7 +13,7 @@ async function cargarProductos() {
     const div = document.createElement("div");
     div.className = "producto";
     div.innerHTML = `
-      // <img src="${p.imagen_url}" alt="Imagen de ${p.nombre}" class="img-fluid" style="max-height:150px; object-fit:contain;">
+      const loquedebeirsinoestalodeabajo = "<img src="${p.imagen_url}" alt="Imagen de ${p.nombre}" class="img-fluid" style="max-height:150px; object-fit:contain;">"
       <img src="${p.imagen}" alt="Imagen de ${p.nombre}">
       <h4>${p.nombre}</h4>
       <div class="descripcion">
