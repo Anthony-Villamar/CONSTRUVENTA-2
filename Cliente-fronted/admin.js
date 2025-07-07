@@ -47,6 +47,7 @@ async function cargarProductos() {
             <li class="list-group-item"><b>Stock:</b> ${p.stock}</li>
             <li class="list-group-item"><b>Peso:</b> ${p.peso_kg} kg</li>
           </ul>
+          <button class="btn btn-primary mt-2" onclick="actualizarProducto('${p.codigo_producto}')">Editar</button>
         </div>
       </div>
     `;
