@@ -68,7 +68,8 @@ async function registrarProducto(event) {
   formData.append("precio", parseFloat(document.getElementById("precio").value).toFixed(2));
   formData.append("stock", parseInt(document.getElementById("stock").value));
   formData.append("peso_kg", parseFloat(document.getElementById("peso").value).toFixed(2));
-  formData.append("imagen", document.getElementById("imagen").files[0]);
+  // formData.append("imagen", document.getElementById("imagen").files[0]);
+  formData.append("imagen_url", document.getElementById("imagen_url").value);
 
   const res = await fetch("https://inventario-d5am.onrender.com/api/productos", {
     method: "POST",
