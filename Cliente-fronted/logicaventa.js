@@ -72,6 +72,18 @@ async function asignarTransportePorPeso() {
   actualizarResumen(); // ✅ Asegúrate de actualizar siempre después
 }
 
+function limpiarCarrito() {
+  carrito = [];
+  actualizarCarrito();
+  document.getElementById("lista-productos").innerHTML = "";
+  document.getElementById("total-articulos").innerText = "$0.00";
+  document.getElementById("subtotal").innerText = "$0.00";
+  document.getElementById("envio").innerText = "$0.00";
+  document.getElementById("iva").innerText = "$0.00";
+  document.getElementById("estimacion-total").innerText = "$0.00";
+}
+
+
 function actualizarCarrito() {
   const lista = document.getElementById("carrito");
   lista.innerHTML = "";
@@ -203,9 +215,11 @@ paypal.Buttons({
         const envioData = await envioRes.json();
         console.log("✅ Envío registrado:", envioData);
         alert("Pedido, factura y envío registrados correctamente.");
+        limpiarCarrito();
       } else {
         console.log("📝 No se registró envío porque no se contrató transporte.");
         alert("Pedido y factura registrados correctamente (sin transporte).");
+        limpiarCarrito();
       }
 
     } catch (err) {
