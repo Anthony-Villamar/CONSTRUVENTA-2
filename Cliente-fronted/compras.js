@@ -77,7 +77,8 @@ async function listarCompras() {
     // 🔥 Agrupar por fecha_pedido (sin segundos)
     const agrupados = {};
     pedidos.forEach(p => {
-      const fechaHora = p.fecha_pedido.slice(0, 16); // yyyy-mm-dd HH:MM
+      // const fechaHora = p.fecha_pedido.slice(0, 16); // yyyy-mm-dd HH:MM
+      const fechaHora = p.hora_compra.slice(0, 16); // yyyy-mm-dd HH:MM
       if (!agrupados[fechaHora]) {
         agrupados[fechaHora] = [];
       }
@@ -106,7 +107,10 @@ Object.values(pedidos).forEach(pedido => {
   div.innerHTML = `
     <p><b>ID Pedido:</b> ${pedido.primer_id_pedido}</p>
     <p><b>Hora:</b> ${pedido.hora_compra}</p>
-    <p><b>Productos:</b> ${pedido.productos}</p>
+    <p><b>Productos:</b></p>
+    <ul>
+        ${grupo.map(p => `<li>${p.nombre_producto} x ${p.cantidad}</li>`).join("")}
+    </ul>
     <hr>
   `;
   contenedor.appendChild(div);
