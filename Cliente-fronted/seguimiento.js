@@ -98,7 +98,7 @@ async function cargarEnvios() {
       <p><b>Productos:</b></p>
       <ul>
         <!--${productosHTML}-->
-        ${e.productos.split(', ').map(p => `<li>${p}</li>`).join('')}
+        ${grupo.pedido.productos.split(', ').map(p => `<li>${p}</li>`).join('')}
       </ul>
       <hr>
     `;
