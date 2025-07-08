@@ -73,14 +73,19 @@ router.get("/envios/usuario/:id_cliente", async (req, res) => {
     //   WHERE p.id_cliente = ?
     // `, [id_cliente]);
     const [filas] = await db.execute(`
-  SELECT e.*, t.nombre AS transporte_nombre, t.precio AS transporte_precio,
-         p.producto, p.cantidad, prod.nombre AS nombre_producto
+  SELECT 
+    e.*, 
+    t.nombre AS transporte_nombre, 
+    t.precio AS transporte_precio,
+    GROUP_CONCAT(CONCAT(pr.nombre, ' x', p.cantidad) SEPARATOR ', ') AS productos
   FROM envios e
   JOIN pedido p ON e.id_pedido = p.id_pedido
   JOIN transportes t ON e.transporte_id = t.id
-  JOIN producto prod ON p.producto = prod.codigo_producto
+  JOIN productos pr ON p.producto = pr.codigo_producto
   WHERE p.id_cliente = ?
+  GROUP BY e.id_envio
 `, [id_cliente]);
+
 
     res.json(filas);
   } catch (error) {
