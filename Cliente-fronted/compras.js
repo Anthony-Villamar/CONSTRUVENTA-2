@@ -55,7 +55,7 @@ async function listarCompras() {
   const fecha_inicio = document.getElementById("fecha_inicio").value;
   const fecha_fin = document.getElementById("fecha_fin").value;
 
-  let url = `https://construventa-3.onrender.com/api/pedidos/usuario/${usuario_id}`;
+  // let url = `https://construventa-3.onrender.com/api/pedidos/usuario/${usuario_id}`;
   let url = `https://construventa-3.onrender.com/api/pedidos/usuario/${usuario_id}/agrupados`;
 
   if (fecha_inicio && fecha_fin) {
