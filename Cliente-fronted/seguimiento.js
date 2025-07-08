@@ -96,7 +96,10 @@ async function cargarEnvios() {
       <p>Estado: <strong>${p.estado}</strong></p>
       <p>Fecha estimada de entrega: ${p.fecha_estimada}</p>
       <p><b>Productos:</b></p>
-      <ul>${productosHTML}</ul>
+      <ul>
+        <!--${productosHTML}-->
+        ${e.productos.split(', ').map(p => `<li>${p}</li>`).join('')}
+      </ul>
       <hr>
     `;
     lista.appendChild(div);
