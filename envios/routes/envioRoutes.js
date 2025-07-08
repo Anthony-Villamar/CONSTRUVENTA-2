@@ -78,7 +78,7 @@ router.get("/envios/usuario/:id_cliente", async (req, res) => {
   FROM envios e
   JOIN pedido p ON e.id_pedido = p.id_pedido
   JOIN transportes t ON e.transporte_id = t.id
-  JOIN productos prod ON p.producto = prod.codigo_producto
+  JOIN producto prod ON p.producto = prod.codigo_producto
   WHERE p.id_cliente = ?
 `, [id_cliente]);
 
