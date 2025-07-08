@@ -86,35 +86,35 @@ async function listarCompras() {
     });
 
     // 🔥 Mostrar agrupados
-    Object.keys(agrupados).forEach(fechaHora => {
-      const grupo = agrupados[fechaHora];
+    // Object.keys(agrupados).forEach(fechaHora => {
+    //   const grupo = agrupados[fechaHora];
 
-      const div = document.createElement("div");
-      div.innerHTML = `
-        <p><b>ID Pedido:</b> ${grupo[0].id_pedido}</p>
-        <p><b>Fecha:</b> ${fechaHora}</p>
-        <p><b>Productos:</b></p>
-        <ul>
-          <!--${grupo.map(p => `<li>${p.producto} x ${p.cantidad}</li>`).join("")}-->
-          ${grupo.map(p => `<li>${p.nombre_producto} x ${p.cantidad}</li>`).join("")}
-        </ul>
-        <hr>
-      `;
-      contenedor.appendChild(div);
-    });
-// Object.values(pedidos).forEach(pedido => {
-//   const div = document.createElement("div");
-//   div.innerHTML = `
-//     <p><b>ID Pedido:</b> ${pedido.primer_id_pedido}</p>
-//     <p><b>Hora:</b> ${pedido.hora_compra}</p>
-//     <p><b>Productos:</b></p>
-//     <ul>
-//         ${pedido.productos.split(', ').map(p => `<li>${p}</li>`).join('')}
-//     </ul>
-//     <hr>
-//   `;
-//   contenedor.appendChild(div);
-// });
+    //   const div = document.createElement("div");
+    //   div.innerHTML = `
+    //     <p><b>ID Pedido:</b> ${grupo[0].id_pedido}</p>
+    //     <p><b>Fecha:</b> ${fechaHora}</p>
+    //     <p><b>Productos:</b></p>
+    //     <ul>
+    //       <!--${grupo.map(p => `<li>${p.producto} x ${p.cantidad}</li>`).join("")}-->
+    //       ${grupo.map(p => `<li>${p.nombre_producto} x ${p.cantidad}</li>`).join("")}
+    //     </ul>
+    //     <hr>
+    //   `;
+    //   contenedor.appendChild(div);
+    // });
+Object.values(pedidos).forEach(pedido => {
+  const div = document.createElement("div");
+  div.innerHTML = `
+    <p><b>ID Pedido:</b> ${pedido.primer_id_pedido}</p>
+    <p><b>Hora:</b> ${pedido.hora_compra}</p>
+    <p><b>Productos:</b></p>
+    <ul>
+        ${pedido.productos.split(', ').map(p => `<li>${p}</li>`).join('')}
+    </ul>
+    <hr>
+  `;
+  contenedor.appendChild(div);
+});
 
   } catch (error) {
     console.error("❌ Error al listar compras:", error);
