@@ -79,14 +79,10 @@ async function cargarEnvios() {
     });
   });
 
-  // 🔥 Mostrar pedidos
-  Object.values(agrupados).forEach(grupo => {
+  
+ // 🔥 Mostrar pedidos
+Object.values(agrupados).forEach(grupo => {
   const p = grupo.pedido;
-
-  // Aquí usamos grupo.productos correctamente
-  const productosHTML = grupo.productos.length > 0
-    ? grupo.productos.map(pr => `<li>${pr.nombre} x ${pr.cantidad}</li>`).join('')
-    : '<li>No hay productos</li>';
 
   const div = document.createElement("div");
   div.className = "envio";
@@ -97,13 +93,11 @@ async function cargarEnvios() {
     <p>Zona: ${p.zona_entrega}</p>
     <p>Estado: <strong>${p.estado}</strong></p>
     <p>Fecha estimada de entrega: ${p.fecha_estimada}</p>
-    <p><b>Productos:</b></p>
-    <ul>
-      ${productosHTML}
-    </ul>
+    <p><b>Productos:</b> ${p.productos || 'No hay productos'}</p>
     <hr>
   `;
   lista.appendChild(div);
 });
+
 
 }
