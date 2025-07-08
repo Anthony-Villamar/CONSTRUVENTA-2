@@ -137,24 +137,44 @@ async function cargarEnvios() {
     agrupados[e.id_pedido_global].productos.push(`${e.nombre_producto} x${e.cantidad}`);
   });
 
-  Object.values(agrupados).forEach(grupo => {
-    const p = grupo.pedido;
+  // Object.values(agrupados).forEach(grupo => {
+  //   const p = grupo.pedido;
 
-    const div = document.createElement("div");
-    div.className = "envio";
-    div.innerHTML = `
-      <h4>Pedido Global: ${p.id_pedido_global}</h4>
-      <p>Transporte: ${p.transporte_nombre} ($${p.transporte_precio})</p>
-      <p>Dirección: ${p.direccion_entrega}</p>
-      <p>Zona: ${p.zona_entrega}</p>
-      <p>Estado: <strong>${p.estado}</strong></p>
-      <p>Fecha estimada de entrega: ${p.fecha_estimada}</p>
-      <p><b>Productos:</b></p>
-      <ul>
-        ${grupo.productos.map(pr => `<li>${pr}</li>`).join('')}
-      </ul>
-      <hr>
-    `;
-    lista.appendChild(div);
-  });
+  //   const div = document.createElement("div");
+  //   div.className = "envio";
+  //   div.innerHTML = `
+  //     <h4>Pedido Global: ${p.id_pedido_global}</h4>
+  //     <p>Transporte: ${p.transporte_nombre} ($${p.transporte_precio})</p>
+  //     <p>Dirección: ${p.direccion_entrega}</p>
+  //     <p>Zona: ${p.zona_entrega}</p>
+  //     <p>Estado: <strong>${p.estado}</strong></p>
+  //     <p>Fecha estimada de entrega: ${p.fecha_estimada}</p>
+  //     <p><b>Productos:</b></p>
+  //     <ul>
+  //       ${grupo.productos.map(pr => `<li>${pr}</li>`).join('')}
+  //     </ul>
+  //     <hr>
+  //   `;
+  //   lista.appendChild(div);
+  // });
+Object.values(envios).forEach(p => {
+  const div = document.createElement("div");
+  div.className = "envio";
+  div.innerHTML = `
+    <h4>Pedido Global: ${p.id_pedido_global}</h4>
+    <p>Transporte: ${p.transporte_nombre} ($${p.transporte_precio})</p>
+    <p>Dirección: ${p.direccion_entrega}</p>
+    <p>Zona: ${p.zona_entrega}</p>
+    <p>Estado: <strong>${p.estado}</strong></p>
+    <p>Fecha estimada de entrega: ${p.fecha_estimada}</p>
+    <p><b>Productos:</b></p>
+    <ul>
+      ${p.productos.split(', ').map(prod => `<li>${prod}</li>`).join('')}
+    </ul>
+    <hr>
+  `;
+  lista.appendChild(div);
+});
+
+  
 }
