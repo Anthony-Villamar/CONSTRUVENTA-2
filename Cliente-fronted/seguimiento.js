@@ -82,9 +82,9 @@ async function cargarEnvios() {
   // 🔥 Mostrar pedidos
   Object.values(agrupados).forEach(grupo => {
     const p = grupo.pedido;
-    const productosHTML = grupo.productos.map(prod =>
-      `<li>${prod.nombre} x ${prod.cantidad}</li>`
-    ).join("");
+    const productosHTML = p.productos
+  ? p.productos.split(', ').map(pr => `<li>${pr}</li>`).join('')
+  : '<li>No hay productos</li>';
 
     const div = document.createElement("div");
     div.className = "envio";
@@ -97,8 +97,8 @@ async function cargarEnvios() {
       <p>Fecha estimada de entrega: ${p.fecha_estimada}</p>
       <p><b>Productos:</b></p>
       <ul>
-        <!--${productosHTML}-->
-        ${grupo.pedido.productos.split(', ').map(p => `<li>${p}</li>`).join('')}
+        ${productosHTML}
+        <!--${grupo.pedido.productos.split(', ').map(p => `<li>${p}</li>`).join('')}-->
       </ul>
       <hr>
     `;
