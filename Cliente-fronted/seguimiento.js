@@ -81,27 +81,29 @@ async function cargarEnvios() {
 
   // 🔥 Mostrar pedidos
   Object.values(agrupados).forEach(grupo => {
-    const p = grupo.pedido;
-    const productosHTML = p.productos
-  ? p.productos.split(', ').map(pr => `<li>${pr}</li>`).join('')
-  : '<li>No hay productos</li>';
+  const p = grupo.pedido;
 
-    const div = document.createElement("div");
-    div.className = "envio";
-    div.innerHTML = `
-      <h4>Pedido: ${p.id_pedido}</h4>
-      <p>Transporte: ${p.transporte_nombre} ($${p.transporte_precio})</p>
-      <p>Dirección: ${p.direccion_entrega}</p>
-      <p>Zona: ${p.zona_entrega}</p>
-      <p>Estado: <strong>${p.estado}</strong></p>
-      <p>Fecha estimada de entrega: ${p.fecha_estimada}</p>
-      <p><b>Productos:</b></p>
-      <ul>
-        ${productosHTML}
-        <!--${grupo.pedido.productos.split(', ').map(p => `<li>${p}</li>`).join('')}-->
-      </ul>
-      <hr>
-    `;
-    lista.appendChild(div);
-  });
+  // Aquí usamos grupo.productos correctamente
+  const productosHTML = grupo.productos.length > 0
+    ? grupo.productos.map(pr => `<li>${pr.nombre} x ${pr.cantidad}</li>`).join('')
+    : '<li>No hay productos</li>';
+
+  const div = document.createElement("div");
+  div.className = "envio";
+  div.innerHTML = `
+    <h4>Pedido: ${p.id_pedido}</h4>
+    <p>Transporte: ${p.transporte_nombre} ($${p.transporte_precio})</p>
+    <p>Dirección: ${p.direccion_entrega}</p>
+    <p>Zona: ${p.zona_entrega}</p>
+    <p>Estado: <strong>${p.estado}</strong></p>
+    <p>Fecha estimada de entrega: ${p.fecha_estimada}</p>
+    <p><b>Productos:</b></p>
+    <ul>
+      ${productosHTML}
+    </ul>
+    <hr>
+  `;
+  lista.appendChild(div);
+});
+
 }
