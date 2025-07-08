@@ -80,8 +80,8 @@ router.get("/envios/usuario/:id_cliente", async (req, res) => {
     GROUP_CONCAT(CONCAT(pr.nombre, ' x', p.cantidad) SEPARATOR ', ') AS productos
   FROM envios e
   JOIN pedido p ON e.id_pedido = p.id_pedido
-  JOIN transportes t ON e.transporte_id = t.id
   JOIN producto pr ON p.producto = pr.codigo_producto
+  JOIN transportes t ON e.transporte_id = t.id
   WHERE p.id_cliente = ?
   GROUP BY e.id_envio
 `, [id_cliente]);
