@@ -109,7 +109,7 @@ Object.values(pedidos).forEach(pedido => {
     <p><b>Hora:</b> ${pedido.hora_compra}</p>
     <p><b>Productos:</b></p>
     <ul>
-        ${grupo.map(p => `<li>${p.nombre_producto} x ${p.cantidad}</li>`).join("")}
+        ${pedido.productos.split(', ').map(p => `<li>${p}</li>`).join('')}
     </ul>
     <hr>
   `;
