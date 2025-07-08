@@ -88,6 +88,7 @@ async function listarCompras() {
 
       const div = document.createElement("div");
       div.innerHTML = `
+        <p><b>ID Pedido:</b> ${grupo[0].id_pedido}</p>
         <p><b>Fecha:</b> ${fechaHora}</p>
         <p><b>Productos:</b></p>
         <ul>
