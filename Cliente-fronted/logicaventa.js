@@ -156,26 +156,6 @@ function eliminarProducto(index) {
   actualizarCarrito();
 }
 
-
-async function eliminarProducto(index) {
-  const producto = carrito[index];
-
-  // 🔥 Llamada al backend para reabastecer
-  const res = await fetch(`https://inventario-d5am.onrender.com/productos/${producto.codigo}/reabastecer`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ cantidad: producto.cantidad })
-  });
-  if (!res.ok) {
-    alert("Error al reabastecer stock en BD");
-    return;
-  }
-
-  carrito.splice(index, 1);
-  actualizarCarrito();
-}
-
-
 function actualizarResumen() {
   let subtotal = carrito.reduce((acc, p) => acc + p.precio * p.cantidad, 0);
   const usarTransporte = document.getElementById("usarTransporte").checked;
