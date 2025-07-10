@@ -36,7 +36,7 @@ async function cargarEnvios() {
   });
 
 
-Object.values(envios).forEach(p => {
+Object.values(envios).reverse().forEach(p => {
   const div = document.createElement("div");
   div.className = "envio";
   div.innerHTML = `
