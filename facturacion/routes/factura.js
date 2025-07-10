@@ -58,7 +58,7 @@ router.post("/facturas", async (req, res) => {
         // Insertar en la tabla de factura
         await db.execute(
             `INSERT INTO factura (id_pedido, fecha_emision, total, transporte_precio)
-             VALUES (?, NOW(), ?, ?)`,
+             VALUES (?, CONVERT_TZ(NOW(), '+00:00', '-05:00'), ?, ?)`,
             [id_pedido, monto_total, transporte_precio]
         );
 
