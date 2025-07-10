@@ -212,7 +212,7 @@ paypal.Buttons({
     alert("¡Pago exitoso!");
   
     try {
-      // ✅ 1. Crear pedido y obtener id_pedido
+      // ✅ 1. Crear pedido
       const pedidoRes = await fetch("https://construventa-3.onrender.com/api/pedidos", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -230,14 +230,17 @@ paypal.Buttons({
       const id_pedido = pedidoData.ids_pedidos[0];
       console.log("📝 id_pedido recibido:", id_pedido);
   
-      // ✅ 2. Ejecutar factura y envío en paralelo si envío no necesita factura creada primero
+      // ✅ 2. Preparar factura promise
       const facturaPromise = fetch("https://facturacion-dhh9.onrender.com/facturas", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id_pedido, transporte_precio: totalTransporte })
       });
   
-      let envioPromise = Promise.resolve(); // default
+      // ✅ 3. Preparar envio promise si hay transporte seleccionado
+      let envioPromise = Promise.resolve(); // default si no hay transporte
+      let envioRealizado = false;
+  
       if (transporteSeleccionado) {
         const usuarioRes = await fetch(`https://usuarios-1yw0.onrender.com/usuarios/${usuario_id}`);
         const usuario = await usuarioRes.json();
@@ -253,16 +256,27 @@ paypal.Buttons({
             zona_entrega: zona,
             transporte_id: transporteSeleccionado.id
           })
+        }).then(res => {
+          if (!res.ok) throw new Error("❌ Error en /envios");
+          envioRealizado = true;
+          return res.json();
         });
       }
   
-      // ✅ 3. Esperar ambas promesas
+      // ✅ 4. Ejecutar ambas promesas en paralelo
       const [facturaRes, envioRes] = await Promise.all([facturaPromise, envioPromise]);
   
       if (!facturaRes.ok) throw new Error("❌ Error en /facturas");
-      if (transporteSeleccionado && !envioRes.ok) throw new Error("❌ Error en /envios");
   
-      alert("Pedido, factura y envío registrados correctamente.");
+      // ✅ 5. Mostrar alerta diferenciada
+      if (envioRealizado) {
+        console.log("✅ Envío registrado:", envioRes);
+        alert("Pedido, factura y envío registrados correctamente.");
+      } else {
+        console.log("📝 No se registró envío porque no se contrató transporte.");
+        alert("Pedido y factura registrados correctamente (sin transporte).");
+      }
+  
       await cargarProductos();
       limpiarCarrito();
   
@@ -271,6 +285,7 @@ paypal.Buttons({
       alert("Error al procesar la compra: " + err.message);
     }
   }
+
 
 
 
