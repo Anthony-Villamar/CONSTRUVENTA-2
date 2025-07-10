@@ -28,26 +28,56 @@ async function cargarProductos() {
   });
 }
 
-function agregarProducto(codigo, nombre, precio, peso, stock) {
+// function agregarProducto(codigo, nombre, precio, peso, stock) {
+//   const cantidadInput = document.getElementById("cantidad_" + codigo);
+//   const cantidad = parseInt(cantidadInput.value);
+
+//   // ✅ Validación de stock antes de agregar
+//   if (cantidad > stock) {
+//     alert(`No puedes agregar más de ${stock} unidades en stock.`);
+//     return;
+//   }
+
+//   const item = carrito.find(p => p.codigo === codigo);
+//   if (item) {
+//     if (item.cantidad + cantidad > stock) {
+//       alert(`No puedes tener más de ${stock} unidades en el carrito.`);
+//       return;
+//     }
+//     item.cantidad += cantidad;
+//   } else {
+//     carrito.push({ codigo, nombre, precio, peso, cantidad });
+//   }
+//   actualizarCarrito();
+// }
+async function agregarProducto(codigo, nombre, precio, peso, stock) {
   const cantidadInput = document.getElementById("cantidad_" + codigo);
   const cantidad = parseInt(cantidadInput.value);
 
-  // ✅ Validación de stock antes de agregar
   if (cantidad > stock) {
     alert(`No puedes agregar más de ${stock} unidades en stock.`);
     return;
   }
 
+  // 🔥 Llamada al backend para descontar
+  const res = await fetch(`https://tu_api_inventario.com/productos/${codigo}/actualizarExistencias`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ cantidad })
+  });
+  if (!res.ok) {
+    alert("Error al actualizar stock en BD");
+    return;
+  }
+
+  // ✅ Si el descuento fue exitoso, agrega al carrito
   const item = carrito.find(p => p.codigo === codigo);
   if (item) {
-    if (item.cantidad + cantidad > stock) {
-      alert(`No puedes tener más de ${stock} unidades en el carrito.`);
-      return;
-    }
     item.cantidad += cantidad;
   } else {
     carrito.push({ codigo, nombre, precio, peso, cantidad });
   }
+
   actualizarCarrito();
 }
 
