@@ -41,7 +41,7 @@
 
             const params = new URLSearchParams({ email, password });
 
-            if (!email.endsWith("@gmail.com" || "@ghotmail.com" || "@outlook.com")) {
+            if ((!email.endsWith("@gmail.com")) || (!email.endsWith("@ghotmail.com")) || (!email.endsWith("@outlook.com"))) {
                 alert("El correo debe terminar en @gmail.com, @hotmail.com, @outlook.com");
                 emailInput.focus();
                 return;
