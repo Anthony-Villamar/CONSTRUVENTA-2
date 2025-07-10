@@ -141,7 +141,7 @@ function toggleTransporte() {
     totalTransporte = 0;
     transporteSeleccionado = null;
     document.getElementById("precioTransporte").innerText = "Transporte desactivado";
-    actualizarResumen(); // ✅ Refresca inmediatamente al desactivar
+    actualizarResumen();
   } else {
     asignarTransportePorPeso();
   }
