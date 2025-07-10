@@ -18,7 +18,7 @@ app.add_middleware(
 async def root():
     return {"mensaje": " Usuarios funcionando"}
 
-# 🟢 Registro de usuario
+# CREARUSUARIO()
 @app.post("/usuarios")
 def registrar_usuario(usuario: Usuario):
     conn = get_connection()
@@ -44,7 +44,7 @@ def registrar_usuario(usuario: Usuario):
         cursor.close()
         conn.close()
 
-# 🟢 Login de usuario
+# LOGIN()
 @app.post("/login")
 def login(email: str, password: str):
     conn = get_connection()
@@ -71,7 +71,7 @@ def login(email: str, password: str):
     else:
         raise HTTPException(status_code=401, detail="Credenciales inválidas")
 
-# 🟢 Consultar usuario
+# CONSULTAR USUARIO()
 @app.get("/usuarios/{cedula}")
 def consultar_usuario(cedula: str):
     conn = get_connection()
@@ -99,7 +99,7 @@ def consultar_usuario(cedula: str):
     else:
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
 
-# 🟢 Actualizar usuario (patch)
+# ACTUALIZAR USUARIO()
 @app.patch("/usuarios/{cedula}")
 def actualizar_usuario(cedula: str, usuario: dict = Body(...)):
     conn = get_connection()
