@@ -25,7 +25,7 @@ async function listarCompras() {
       return;
     }
 
-    pedidos.forEach(pedido => {
+    pedidos.reverse().forEach(pedido => {
       const div = document.createElement("div");
       div.innerHTML = `
         <p><b>ID Pedido Global:</b> ${pedido.id_pedido_global}</p>
