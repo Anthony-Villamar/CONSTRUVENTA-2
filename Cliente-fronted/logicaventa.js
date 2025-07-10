@@ -50,27 +50,26 @@ async function cargarProductos() {
 //   }
 //   actualizarCarrito();
 // }
-async function agregarProducto(codigo, nombre, precio, peso, stock) {
+function agregarProducto(codigo, nombre, precio, peso, stock) {
   const cantidadInput = document.getElementById("cantidad_" + codigo);
   const cantidad = parseInt(cantidadInput.value);
 
+  // ✅ Validación de stock antes de agregar
   if (cantidad > stock) {
     alert(`No puedes agregar más de ${stock} unidades en stock.`);
     return;
   }
 
-  // 🔥 Llamada al backend para descontar
-  const res = await fetch(`https://tu_api_inventario.com/productos/${codigo}/actualizarExistencias`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ cantidad })
-  });
-  if (!res.ok) {
-    alert("Error al actualizar stock en BD");
-    return;
-  }
+  // 🔥 Descontar visualmente el stock
+  const nuevoStock = stock - cantidad;
 
-  // ✅ Si el descuento fue exitoso, agrega al carrito
+  // Actualiza el max del input y el stock mostrado en la tarjeta
+  cantidadInput.max = nuevoStock;
+
+  const stockElemento = cantidadInput.parentElement.querySelector(".descripcion p:nth-child(3)");
+  stockElemento.innerHTML = `<b>Stock:</b> ${nuevoStock}`;
+
+  // ✅ Agrega al carrito
   const item = carrito.find(p => p.codigo === codigo);
   if (item) {
     item.cantidad += cantidad;
@@ -80,6 +79,7 @@ async function agregarProducto(codigo, nombre, precio, peso, stock) {
 
   actualizarCarrito();
 }
+
 
 function calcularPesoTotal() {
   return carrito.reduce((total, item) => total + (item.peso * item.cantidad), 0);
@@ -136,10 +136,45 @@ function actualizarCarrito() {
   }
 }
 
+// function eliminarProducto(index) {
+//   carrito.splice(index, 1);
+//   actualizarCarrito();
+// }
 function eliminarProducto(index) {
+  const producto = carrito[index];
+  const cantidadInput = document.getElementById("cantidad_" + producto.codigo);
+
+  // 🔥 Regresa el stock visual
+  const nuevoStock = parseInt(cantidadInput.max) + producto.cantidad;
+  cantidadInput.max = nuevoStock;
+
+  const stockElemento = cantidadInput.parentElement.querySelector(".descripcion p:nth-child(3)");
+  stockElemento.innerHTML = `<b>Stock:</b> ${nuevoStock}`;
+
+  // ✅ Elimina del carrito
   carrito.splice(index, 1);
   actualizarCarrito();
 }
+
+
+async function eliminarProducto(index) {
+  const producto = carrito[index];
+
+  // 🔥 Llamada al backend para reabastecer
+  const res = await fetch(`https://inventario-d5am.onrender.com/productos/${producto.codigo}/reabastecer`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ cantidad: producto.cantidad })
+  });
+  if (!res.ok) {
+    alert("Error al reabastecer stock en BD");
+    return;
+  }
+
+  carrito.splice(index, 1);
+  actualizarCarrito();
+}
+
 
 function actualizarResumen() {
   let subtotal = carrito.reduce((acc, p) => acc + p.precio * p.cantidad, 0);
@@ -245,6 +280,7 @@ paypal.Buttons({
         const envioData = await envioRes.json();
         console.log("✅ Envío registrado:", envioData);
         alert("Pedido, factura y envío registrados correctamente.");
+        await cargarProductos();
         limpiarCarrito();
       } else {
         console.log("📝 No se registró envío porque no se contrató transporte.");
