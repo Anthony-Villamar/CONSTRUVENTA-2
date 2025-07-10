@@ -45,7 +45,7 @@ Object.values(envios).reverse().forEach(p => {
     <p>Dirección: ${p.direccion_entrega}</p>
     <p>Zona: ${p.zona_entrega}</p>
     <p>Estado: <strong>${p.estado}</strong></p>
-    <p>Fecha estimada de entrega: ${p.fecha_estimada}</p>
+    <p>Fecha estimada de entrega: ${p.fecha_estimada.slice(0,10)}</p>
     <p><b>Productos:</b></p>
     <ul>
       ${p.productos.split(', ').map(prod => `<li>${prod}</li>`).join('')}
