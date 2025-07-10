@@ -16,12 +16,12 @@
 
             <div class="mb-3">
               <label for="email" class="form-label">Email</label>
-              <input type="email" class="form-control" id="email" pattern="[A-Za-z]{30}" placeholder="Ingresa tu email">
+              <input type="email" class="form-control" id="email" pattern="[A-Za-z]+" maxlength="30" placeholder="Ingresa tu email">
             </div>
 
             <div class="mb-3">
               <label for="password" class="form-label">Contraseña</label>
-              <input type="password" class="form-control" id="password" placeholder="Ingresa tu contraseña">
+              <input type="password" class="form-control" id="password" maxlength="25" placeholder="Ingresa tu contraseña">
             </div>
 
             <button onclick="login()" class="btn btn-primary w-100">Ingresar</button>
@@ -41,11 +41,18 @@
 
             const params = new URLSearchParams({ email, password });
 
-            if ((!email.endsWith("@gmail.com")) || (!email.endsWith("@ghotmail.com")) || (!email.endsWith("@outlook.com"))) {
-                alert("El correo debe terminar en @gmail.com, @hotmail.com, @outlook.com");
-                emailInput.focus();
-                return;
+           if (
+              !(
+                email.endsWith("@gmail.com") ||
+                email.endsWith("@hotmail.com") ||
+                email.endsWith("@outlook.com")
+              )
+            ) {
+              alert("El correo debe terminar en @gmail.com, @hotmail.com, @outlook.com");
+              emailInput.focus();
+              return;
             }
+
 
             const res = await fetch(`https://usuarios-1yw0.onrender.com/login?${params.toString()}`, {
                 method: "POST"
