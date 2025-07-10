@@ -50,23 +50,26 @@ async function cargarProductos() {
 //   }
 //   actualizarCarrito();
 // }
-function agregarProducto(codigo, nombre, precio, peso, stock) {
+function agregarProducto(codigo, nombre, precio, peso) {
   const cantidadInput = document.getElementById("cantidad_" + codigo);
   const cantidad = parseInt(cantidadInput.value);
 
+  // 🔥 Obtiene el stock actual mostrado en pantalla
+  const stockElemento = cantidadInput.parentElement.querySelector(".descripcion p:nth-child(3)");
+  const stockActualTexto = stockElemento.innerText; // "<b>Stock:</b> 79"
+  const stockActual = parseInt(stockActualTexto.split(":")[1].trim());
+
   // ✅ Validación de stock antes de agregar
-  if (cantidad > stock) {
-    alert(`No puedes agregar más de ${stock} unidades en stock.`);
+  if (cantidad > stockActual) {
+    alert(`No puedes agregar más de ${stockActual} unidades en stock.`);
     return;
   }
 
   // 🔥 Descontar visualmente el stock
-  const nuevoStock = stock - cantidad;
+  const nuevoStock = stockActual - cantidad;
 
   // Actualiza el max del input y el stock mostrado en la tarjeta
   cantidadInput.max = nuevoStock;
-
-  const stockElemento = cantidadInput.parentElement.querySelector(".descripcion p:nth-child(3)");
   stockElemento.innerHTML = `<b>Stock:</b> ${nuevoStock}`;
 
   // ✅ Agrega al carrito
