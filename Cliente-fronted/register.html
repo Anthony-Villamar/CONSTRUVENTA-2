@@ -92,8 +92,8 @@
                 return;
             }
 
-            if (!email.endsWith("@gmail.com")) {
-                alert("El correo debe terminar en @gmail.com");
+            if (!email.endsWith("@gmail.com")||"@hotmail.com"||"outlook.com") {
+                alert("El correo debe terminar en @gmail.com, @hotmail.com, @outlook.com");
                 emailInput.focus();
                 return;
             }
