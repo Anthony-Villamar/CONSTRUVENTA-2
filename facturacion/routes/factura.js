@@ -15,7 +15,7 @@ const db = await mysql.createConnection({
 
 
 
-// Ruta POST /facturas
+// CREAR FACTURA Y CALCULAR TOTAL
 router.post("/facturas", async (req, res) => {
     console.log("✅ Recibido POST /facturas:", req.body);
 
@@ -77,7 +77,7 @@ router.post("/facturas", async (req, res) => {
 });
 
 
-// Ruta GET /facturas -> obtiene todas las facturas
+// CONSULTAR FACTURAS
 router.get("/facturas", async (req, res) => {
     try {
         const [facturas] = await db.execute(`
@@ -93,7 +93,7 @@ router.get("/facturas", async (req, res) => {
     }
 });
 
-// Ruta GET /facturas/usuario/:id_cliente -> obtiene facturas de un usuario específico
+// CONSULTAR FACTURAS POR ID
 router.get("/facturas/usuario/:id_cliente", async (req, res) => {
     const { id_cliente } = req.params;
 
