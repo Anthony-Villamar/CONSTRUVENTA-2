@@ -15,11 +15,18 @@ document.getElementById("perfil-form").addEventListener("submit", async (e) => {
     rol: "cliente"  // ✅ Envía si tu modelo lo requiere por defecto
   };
 
-  if !(email.endsWith("@gmail.com")||email.endsWith("@hotmail.com")||email.endsWith("outlook.com")) {
-                alert("El correo debe terminar en @gmail.com, @hotmail.com, @outlook.com");
-                emailInput.focus();
-                return;
-            }
+ if (
+  !(
+      email.endsWith("@gmail.com") ||
+      email.endsWith("@hotmail.com") ||
+      email.endsWith("@outlook.com")
+    )
+  ) {
+    alert("El correo debe terminar en @gmail.com, @hotmail.com, @outlook.com");
+    emailInput.focus();
+    return;
+  }
+
 
   ["telefono"].forEach(id => {
     document.getElementById(id).addEventListener("input", function () {
