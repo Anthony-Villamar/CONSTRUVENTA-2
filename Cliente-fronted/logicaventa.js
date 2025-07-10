@@ -210,9 +210,9 @@ paypal.Buttons({
   onApprove: async function(data, actions) {
     await actions.order.capture();
     alert("¡Pago exitoso!");
-
+  
     try {
-      // ✅ 1. Crear pedido
+      // ✅ 1. Crear pedido y obtener id_pedido
       const pedidoRes = await fetch("https://construventa-3.onrender.com/api/pedidos", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -225,27 +225,26 @@ paypal.Buttons({
         })
       });
       if (!pedidoRes.ok) throw new Error("❌ Error en /api/pedidos");
-
+  
       const pedidoData = await pedidoRes.json();
       const id_pedido = pedidoData.ids_pedidos[0];
       console.log("📝 id_pedido recibido:", id_pedido);
-
-      // ✅ 2. Generar factura
-      const facturaRes = await fetch("https://facturacion-dhh9.onrender.com/facturas", {
+  
+      // ✅ 2. Ejecutar factura y envío en paralelo si envío no necesita factura creada primero
+      const facturaPromise = fetch("https://facturacion-dhh9.onrender.com/facturas", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id_pedido, transporte_precio: totalTransporte })
       });
-      if (!facturaRes.ok) throw new Error("❌ Error en /facturas");
-
-      // ✅ 3. Registrar envío SOLO SI HAY TRANSPORTE SELECCIONADO
+  
+      let envioPromise = Promise.resolve(); // default
       if (transporteSeleccionado) {
         const usuarioRes = await fetch(`https://usuarios-1yw0.onrender.com/usuarios/${usuario_id}`);
         const usuario = await usuarioRes.json();
         const direccion = usuario.direccion;
         const zona = usuario.zona;
-
-        const envioRes = await fetch("https://construventa-2-1.onrender.com/envios", {
+  
+        envioPromise = fetch("https://construventa-2-1.onrender.com/envios", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -255,24 +254,93 @@ paypal.Buttons({
             transporte_id: transporteSeleccionado.id
           })
         });
-        if (!envioRes.ok) throw new Error("❌ Error en /envios");
-
-        const envioData = await envioRes.json();
-        console.log("✅ Envío registrado:", envioData);
-        alert("Pedido, factura y envío registrados correctamente.");
-        await cargarProductos();
-        limpiarCarrito();
-      } else {
-        console.log("📝 No se registró envío porque no se contrató transporte.");
-        alert("Pedido y factura registrados correctamente (sin transporte).");
-        limpiarCarrito();
       }
-
+  
+      // ✅ 3. Esperar ambas promesas
+      const [facturaRes, envioRes] = await Promise.all([facturaPromise, envioPromise]);
+  
+      if (!facturaRes.ok) throw new Error("❌ Error en /facturas");
+      if (transporteSeleccionado && !envioRes.ok) throw new Error("❌ Error en /envios");
+  
+      alert("Pedido, factura y envío registrados correctamente.");
+      await cargarProductos();
+      limpiarCarrito();
+  
     } catch (err) {
       console.error("❌ Error en onApprove:", err.message);
       alert("Error al procesar la compra: " + err.message);
     }
   }
+
+
+
+  
+  // onApprove: async function(data, actions) {
+  //   await actions.order.capture();
+  //   alert("¡Pago exitoso!");
+
+  //   try {
+  //     // ✅ 1. Crear pedido
+  //     const pedidoRes = await fetch("https://construventa-3.onrender.com/api/pedidos", {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({
+  //         usuario_id,
+  //         productos: carrito.map(item => ({
+  //           codigo_producto: item.codigo,
+  //           cantidad: item.cantidad
+  //         }))
+  //       })
+  //     });
+  //     if (!pedidoRes.ok) throw new Error("❌ Error en /api/pedidos");
+
+  //     const pedidoData = await pedidoRes.json();
+  //     const id_pedido = pedidoData.ids_pedidos[0];
+  //     console.log("📝 id_pedido recibido:", id_pedido);
+
+  //     // ✅ 2. Generar factura
+  //     const facturaRes = await fetch("https://facturacion-dhh9.onrender.com/facturas", {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({ id_pedido, transporte_precio: totalTransporte })
+  //     });
+  //     if (!facturaRes.ok) throw new Error("❌ Error en /facturas");
+
+  //     // ✅ 3. Registrar envío SOLO SI HAY TRANSPORTE SELECCIONADO
+  //     if (transporteSeleccionado) {
+  //       const usuarioRes = await fetch(`https://usuarios-1yw0.onrender.com/usuarios/${usuario_id}`);
+  //       const usuario = await usuarioRes.json();
+  //       const direccion = usuario.direccion;
+  //       const zona = usuario.zona;
+
+  //       const envioRes = await fetch("https://construventa-2-1.onrender.com/envios", {
+  //         method: "POST",
+  //         headers: { "Content-Type": "application/json" },
+  //         body: JSON.stringify({
+  //           id_pedido,
+  //           direccion_entrega: direccion,
+  //           zona_entrega: zona,
+  //           transporte_id: transporteSeleccionado.id
+  //         })
+  //       });
+  //       if (!envioRes.ok) throw new Error("❌ Error en /envios");
+
+  //       const envioData = await envioRes.json();
+  //       console.log("✅ Envío registrado:", envioData);
+  //       alert("Pedido, factura y envío registrados correctamente.");
+  //       await cargarProductos();
+  //       limpiarCarrito();
+  //     } else {
+  //       console.log("📝 No se registró envío porque no se contrató transporte.");
+  //       alert("Pedido y factura registrados correctamente (sin transporte).");
+  //       limpiarCarrito();
+  //     }
+
+  //   } catch (err) {
+  //     console.error("❌ Error en onApprove:", err.message);
+  //     alert("Error al procesar la compra: " + err.message);
+  //   }
+  // }
 
 }).render("#paypal-button-container");
 
