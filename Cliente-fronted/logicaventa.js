@@ -28,28 +28,6 @@ async function cargarProductos() {
   });
 }
 
-// function agregarProducto(codigo, nombre, precio, peso, stock) {
-//   const cantidadInput = document.getElementById("cantidad_" + codigo);
-//   const cantidad = parseInt(cantidadInput.value);
-
-//   // ✅ Validación de stock antes de agregar
-//   if (cantidad > stock) {
-//     alert(`No puedes agregar más de ${stock} unidades en stock.`);
-//     return;
-//   }
-
-//   const item = carrito.find(p => p.codigo === codigo);
-//   if (item) {
-//     if (item.cantidad + cantidad > stock) {
-//       alert(`No puedes tener más de ${stock} unidades en el carrito.`);
-//       return;
-//     }
-//     item.cantidad += cantidad;
-//   } else {
-//     carrito.push({ codigo, nombre, precio, peso, cantidad });
-//   }
-//   actualizarCarrito();
-// }
 function agregarProducto(codigo, nombre, precio, peso) {
   const cantidadInput = document.getElementById("cantidad_" + codigo);
   const cantidad = parseInt(cantidadInput.value);
@@ -130,7 +108,9 @@ function actualizarCarrito() {
   });
   const usar = document.getElementById("usarTransporte").checked;
   if (usar) {
-    asignarTransportePorPeso();
+    // asignarTransportePorPeso();
+        document.getElementById("precioTransporte").innerText = "Transporte será asignado por el administrador.";
+
   } else {
     totalTransporte = 0;
     transporteSeleccionado = null;
@@ -191,7 +171,9 @@ function toggleTransporte() {
     document.getElementById("precioTransporte").innerText = "Transporte desactivado";
     actualizarResumen();
   } else {
-    asignarTransportePorPeso();
+    // asignarTransportePorPeso();
+    document.getElementById("precioTransporte").innerText = "Transporte será asignado por el administrador.";
+    actualizarResumen();
   }
 }
 
