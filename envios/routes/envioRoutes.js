@@ -98,15 +98,36 @@ router.get("/envios/usuario/:id_cliente", async (req, res) => {
 });
 
 
+// router.get("/envios/pendientes", async (req, res) => {
+//   try {
+//     const [filas] = await db.execute(`SELECT * FROM envios WHERE transporte_id IS NULL`);
+//     res.json(filas);
+//   } catch (error) {
+//     console.error("❌ Error al obtener envíos pendientes:", error.message);
+//     res.status(500).json({ mensaje: "Error al obtener envíos pendientes", error: error.message });
+//   }
+// });
+
 router.get("/envios/pendientes", async (req, res) => {
   try {
-    const [filas] = await db.execute(`SELECT * FROM envios WHERE transporte_id IS NULL`);
+    const [filas] = await db.execute(`
+      SELECT e.*, 
+        IFNULL((
+          SELECT SUM(pr.peso_kg * p.cantidad)
+          FROM pedido p
+          JOIN producto pr ON p.producto = pr.codigo_producto
+          WHERE p.id_pedido_global = e.id_pedido
+        ), 0) AS peso_total_kg
+      FROM envios e
+      WHERE e.transporte_id IS NULL
+    `);
     res.json(filas);
   } catch (error) {
     console.error("❌ Error al obtener envíos pendientes:", error.message);
     res.status(500).json({ mensaje: "Error al obtener envíos pendientes", error: error.message });
   }
 });
+
 
 
 // Asignar transporte a un envio
