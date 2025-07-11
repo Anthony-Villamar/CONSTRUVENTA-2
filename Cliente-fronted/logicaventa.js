@@ -72,16 +72,22 @@ async function asignarTransportePorPeso() {
   const res = await fetch("https://construventa-2-1.onrender.com/transportes");
   const transportes = await res.json();
   const adecuado = transportes.find(t => pesoTotal <= t.capacidad_max_kg);
+    const precioTransporte = document.getElementById("precioTransporte");
+
   if (adecuado) {
     transporteSeleccionado = adecuado;
     totalTransporte = parseFloat(adecuado.precio);
-    document.getElementById("precioTransporte").innerText = `Precio Transporte: $${totalTransporte.toFixed(2)} (Auto: ${adecuado.nombre})`;
+    if (precioTransporte) {
+          precioTransporte.innerText = `Precio Transporte: $${totalTransporte.toFixed(2)} (Auto: ${adecuado.nombre})`;
+        }  
   } else {
     transporteSeleccionado = null;
     totalTransporte = 0;
-    document.getElementById("precioTransporte").innerText = "Sin transporte disponible para este peso.";
+    if (precioTransporte) {
+      precioTransporte.innerText = "Sin transporte disponible para este peso.";
+    }
   }
-  actualizarResumen(); // ✅ Asegúrate de actualizar siempre después
+  actualizarResumen();
 }
 
 function limpiarCarrito() {
@@ -171,15 +177,20 @@ const usarTransporte = usarTransporteCheckbox ? usarTransporteCheckbox.checked :
 // ✅ Checkbox para usar transporte o no
 function toggleTransporte() {
   const usar = document.getElementById("usarTransporte").checked;
+  const precioTransporte = document.getElementById("precioTransporte");
 
   if (!usar) {
     totalTransporte = 0;
     transporteSeleccionado = null;
-    document.getElementById("precioTransporte").innerText = "Transporte desactivado";
+     if (precioTransporte) {
+      precioTransporte.innerText = "Transporte desactivado";
+    }
     actualizarResumen();
   } else {
     // asignarTransportePorPeso();
-    document.getElementById("precioTransporte").innerText = "Transporte será asignado por el administrador.";
+    if (precioTransporte) {
+          precioTransporte.innerText = "Transporte será asignado por el administrador.";
+        }    
     actualizarResumen();
   }
 }
