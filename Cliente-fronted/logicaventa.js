@@ -26,6 +26,7 @@ async function cargarProductos() {
     `;
     contenedor.appendChild(div);
   });
+  toggleTransporte();
 }
 
 function agregarProducto(codigo, nombre, precio, peso) {
