@@ -176,5 +176,6 @@ async function asignarTransporte(id_envio) {
 (async () => {
   await cargarAlertasStock();
   await cargarProductos();
+   await cargarEnviosPendientes();
   // await cargarPedidos();
 })();
