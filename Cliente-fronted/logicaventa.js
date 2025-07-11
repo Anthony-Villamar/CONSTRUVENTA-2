@@ -142,7 +142,10 @@ function eliminarProducto(index) {
 
 function actualizarResumen() {
   let subtotal = carrito.reduce((acc, p) => acc + p.precio * p.cantidad, 0);
-  const usarTransporte = document.getElementById("usarTransporte").checked;
+  // const usarTransporte = document.getElementById("usarTransporte").checked;
+  const usarTransporteCheckbox = document.getElementById("usarTransporte");
+const usarTransporte = usarTransporteCheckbox ? usarTransporteCheckbox.checked : false;
+
   // const envio = usarTransporte ? parseFloat(totalTransporte) : 0;
   const envio = 0;
   const iva = (subtotal + envio) * 0.15;
