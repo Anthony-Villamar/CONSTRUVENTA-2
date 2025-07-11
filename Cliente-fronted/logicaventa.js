@@ -314,4 +314,6 @@ if (document.getElementById("usarTransporte").checked) { // ✅ si pidió transp
 
 (async () => {
   await cargarProductos();
+  document.getElementById("usarTransporte").checked = false;
+  toggleTransporte()
 })();
