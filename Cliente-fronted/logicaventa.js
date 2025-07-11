@@ -241,31 +241,58 @@ paypal.Buttons({
       });
   
       // ✅ 3. Preparar envio promise si hay transporte seleccionado
-      let envioPromise = Promise.resolve(); // default si no hay transporte
-      let envioRealizado = false;
+      // En logicaventa.js ➔ dentro de onApprove
+let envioPromise = Promise.resolve(); // default si no hay transporte
+let envioRealizado = false;
+
+if (document.getElementById("usarTransporte").checked) { // ✅ si pidió transporte
+  const usuarioRes = await fetch(`https://usuarios-1yw0.onrender.com/usuarios/${usuario_id}`);
+  const usuario = await usuarioRes.json();
+  const direccion = usuario.direccion;
+  const zona = usuario.zona;
+
+  envioPromise = fetch("https://construventa-2-1.onrender.com/envios", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      id_pedido,
+      id_cliente: usuario_id,
+      direccion_entrega: direccion,
+      zona_entrega: zona,
+      transporte_id: null // 🔥 SIN transporte asignado
+    })
+  }).then(res => {
+    if (!res.ok) throw new Error("❌ Error en /envios");
+    envioRealizado = true;
+    return res.json();
+  });
+}
+
+      // let envioPromise = Promise.resolve(); // default si no hay transporte
+      // let envioRealizado = false;
   
-      if (transporteSeleccionado) {
-        const usuarioRes = await fetch(`https://usuarios-1yw0.onrender.com/usuarios/${usuario_id}`);
-        const usuario = await usuarioRes.json();
-        const direccion = usuario.direccion;
-        const zona = usuario.zona;
+      // if (transporteSeleccionado) {
+      //   const usuarioRes = await fetch(`https://usuarios-1yw0.onrender.com/usuarios/${usuario_id}`);
+      //   const usuario = await usuarioRes.json();
+      //   const direccion = usuario.direccion;
+      //   const zona = usuario.zona;
   
-        envioPromise = fetch("https://construventa-2-1.onrender.com/envios", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            id_pedido,
-            id_cliente: usuario_id,
-            direccion_entrega: direccion,
-            zona_entrega: zona,
-            transporte_id: transporteSeleccionado.id
-          })
-        }).then(res => {
-          if (!res.ok) throw new Error("❌ Error en /envios");
-          envioRealizado = true;
-          return res.json();
-        });
-      }
+      //   envioPromise = fetch("https://construventa-2-1.onrender.com/envios", {
+      //     method: "POST",
+      //     headers: { "Content-Type": "application/json" },
+      //     body: JSON.stringify({
+      //       id_pedido,
+      //       id_cliente: usuario_id,
+      //       direccion_entrega: direccion,
+      //       zona_entrega: zona,
+      //       transporte_id: transporteSeleccionado.id
+      //     })
+      //   }).then(res => {
+      //     if (!res.ok) throw new Error("❌ Error en /envios");
+      //     envioRealizado = true;
+      //     return res.json();
+      //   });
+      // }
   
       // ✅ 4. Ejecutar ambas promesas en paralelo
       const [facturaRes, envioRes] = await Promise.all([facturaPromise, envioPromise]);
