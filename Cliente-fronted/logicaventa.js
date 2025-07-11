@@ -156,7 +156,7 @@ function actualizarResumen() {
 
   document.getElementById("total-articulos").innerText = `$${subtotal.toFixed(2)}`;
   document.getElementById("subtotal").innerText = `$${subtotal.toFixed(2)}`;
-  document.getElementById("envio").innerText = `$${envio.toFixed(2)}`;
+  // document.getElementById("envio").innerText = `$${envio.toFixed(2)}`;
   document.getElementById("iva").innerText = `$${iva.toFixed(2)}`;
   document.getElementById("estimacion-total").innerText = `$${estimacionTotal.toFixed(2)}`;
 }
