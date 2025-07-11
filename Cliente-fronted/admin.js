@@ -139,18 +139,21 @@ async function cargarEnviosPendientes() {
     return;
   }
 
-  let html = `<table class="table"><tr><th>ID</th><th>Dirección</th><th>Zona</th><th>Asignar Transporte</th></tr>`;
+  let html = `<table class="table"><tr>
+    <th>ID</th><th>Dirección</th><th>Zona</th><th>Peso Total (kg)</th><th>Asignar Transporte</th></tr>`;
   envios.forEach(e => {
     html += `<tr>
       <td>${e.id_envio}</td>
       <td>${e.direccion_entrega}</td>
       <td>${e.zona_entrega}</td>
+      <td>${e.peso_total_kg.toFixed(2)} kg</td>
       <td><button onclick="asignarTransporte(${e.id_envio})">Asignar</button></td>
     </tr>`;
   });
   html += `</table>`;
   cont.innerHTML = html;
 }
+
 
 async function asignarTransporte(id_envio) {
   const transporte_id = prompt("Ingrese ID de transporte a asignar:");
