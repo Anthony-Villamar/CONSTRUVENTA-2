@@ -28,8 +28,9 @@ async function listarCompras() {
     pedidos.forEach(pedido => {
       const div = document.createElement("div");
       div.innerHTML = `
-        <p><b>ID Pedido Global:</b> ${pedido.id_pedido_global}</p>
+        <p><b>ID Pedido:</b> ${pedido.id_pedido_global}</p>
         <p><b>Fecha:</b> ${pedido.fecha_compra}</p>
+        <p><b>Total compra:</b> $${pedido.total_compra ?? 'No disponible'}</p>
         <p><b>Productos:</b></p>
         <ul>
           ${pedido.productos.split(', ').map(p => `<li>${p}</li>`).join('')}
