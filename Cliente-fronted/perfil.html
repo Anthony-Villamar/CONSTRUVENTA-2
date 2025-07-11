@@ -27,76 +27,97 @@
   </nav>
   </header>
 
-  <main>
-  <div class="container mt-5">
-    <div class="row justify-content-center">
-      <div class="col-md-6">
-        <div class="card shadow">
-          <div class="card-body">
-            <h3 class="card-title text-center mb-4">Actualizacion de Datos</h3>
+  <main class="container mt-5">
 
-            <form id="formulario">
-              
-              <div class="mb-3">
-                <label for="cedula" class="form-label">Cédula</label>
-                <input type="text" class="form-control" id="cedula" placeholder="Cédula" required maxlength="10" pattern="\d{10}" title="Solo números, exactamente 10 dígitos">
-              </div>
+  <h3 class="text-center mb-4">Mi Perfil</h3>
 
-              <div class="mb-3">
-                <label for="nombre" class="form-label">Nombre</label>
-                <input type="text" class="form-control" id="nombre" pattern="[A-Za-z]+" maxlength="15" placeholder="Nombre" required>
-              </div>
+  <div class="row justify-content-center">
+    <div class="col-md-6">
 
-              <div class="mb-3">
-                <label for="apellido" class="form-label">Apellido</label>
-                <input type="text" class="form-control" id="apellido" pattern="[A-Za-z]+" maxlength="20" placeholder="Apellido" required>
-              </div>
-
-              <div class="mb-3">
-                <label for="telefono" class="form-label">Teléfono</label>
-                <input type="text" class="form-control" id="telefono" placeholder="Teléfono" required maxlength="10" pattern="\d{7,10}" title="Solo números, entre 7 y 10 dígitos">
-              </div>
-
-              <div class="mb-3">
-                <label for="direccion" class="form-label">Dirección</label>
-                <input type="text" class="form-control" id="direccion" pattern="[A-Za-z]+" maxlength="50" placeholder="Dirección" required>
-              </div>
-
-              <div class="mb-3">
-                <label for="zona" class="form-label">Zona</label>
-                <select class="form-select" id="zona" required>
-                  <option value="" disabled selected>Selecciona una zona</option>
-                  <option value="norte">Norte</option>
-                  <option value="centro">Centro</option>
-                  <option value="sur">Sur</option>
-                  <option value="este">Este</option>
-                  <option value="oeste">Oeste</option>
-                </select>
-              </div>
-
-              <div class="mb-3">
-                <label for="email" class="form-label">Correo</label>
-                <input type="email" class="form-control" id="email" pattern="[A-Za-z]+" maxlength="30" placeholder="Correo (debe ser @gmail.com)" required>
-              </div>
-
-              <div class="mb-3">
-                <label for="password" class="form-label">Contraseña</label>
-                <input type="password" class="form-control" maxlength="25" id="password" placeholder="Contraseña" required>
-              </div>
-
-              <button type="submit" class="btn btn-success w-100">Registrar</button>
-            </form>
-
-            <div class="text-center mt-3">
-              <a href="venta.html">Ir a la pagina principal</a>
-            </div>
-
-          </div>
+      <!-- Datos del Usuario -->
+      <div class="card shadow mb-4">
+        <div class="card-body">
+          <h5 class="card-title">Datos Registrados</h5>
+          <p><b>Cédula:</b> <span id="cedula"></span></p>
+          <p><b>Nombre:</b> <span id="nombre"></span></p>
+          <p><b>Apellido:</b> <span id="apellido"></span></p>
+          <p><b>Teléfono:</b> <span id="telefono"></span></p>
+          <p><b>Dirección:</b> <span id="direccion"></span></p>
+          <p><b>Zona:</b> <span id="zona"></span></p>
+          <p><b>Email:</b> <span id="email"></span></p>
         </div>
       </div>
+
+      <!-- Formulario de Actualización -->
+      <div class="card shadow">
+        <div class="card-body">
+          <h5 class="card-title text-center mb-4">Actualización de Datos</h5>
+
+          <form id="formulario">
+
+            <div class="mb-3">
+              <label for="cedula" class="form-label">Cédula</label>
+              <input type="text" class="form-control" id="cedula-input" placeholder="Cédula" required maxlength="10" pattern="\d{10}" title="Solo números, exactamente 10 dígitos">
+            </div>
+
+            <div class="mb-3">
+              <label for="nombre" class="form-label">Nombre</label>
+              <input type="text" class="form-control" id="nombre-input" pattern="[A-Za-z]+" maxlength="15" placeholder="Nombre" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="apellido" class="form-label">Apellido</label>
+              <input type="text" class="form-control" id="apellido-input" pattern="[A-Za-z]+" maxlength="20" placeholder="Apellido" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="telefono" class="form-label">Teléfono</label>
+              <input type="text" class="form-control" id="telefono-input" placeholder="Teléfono" required maxlength="10" pattern="\d{7,10}" title="Solo números, entre 7 y 10 dígitos">
+            </div>
+
+            <div class="mb-3">
+              <label for="direccion" class="form-label">Dirección</label>
+              <input type="text" class="form-control" id="direccion-input" maxlength="50" placeholder="Dirección" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="zona" class="form-label">Zona</label>
+              <select class="form-select" id="zona-input" required>
+                <option value="" disabled selected>Selecciona una zona</option>
+                <option value="norte">Norte</option>
+                <option value="centro">Centro</option>
+                <option value="sur">Sur</option>
+                <option value="este">Este</option>
+                <option value="oeste">Oeste</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label for="email" class="form-label">Correo</label>
+              <input type="email" class="form-control" id="email-input" maxlength="30" placeholder="Correo (debe ser @gmail.com)" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="password" class="form-label">Contraseña</label>
+              <input type="password" class="form-control" maxlength="25" id="password-input" placeholder="Contraseña" required>
+            </div>
+
+            <button type="submit" class="btn btn-success w-100">Actualizar</button>
+          </form>
+
+          <div class="text-center mt-3">
+            <a href="venta.html">Ir a la página principal</a>
+          </div>
+
+        </div>
+      </div>
+
     </div>
   </div>
-  </main>
+</main>
+
+
+  
  <script>
     function logout() {
         localStorage.clear();
