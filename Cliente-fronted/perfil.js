@@ -7,7 +7,7 @@ async function consultarPerfil() {
 
     const data = await res.json();
 
-    // Mostrar datos
+    // Mostrar en la sección de perfil
     document.getElementById("cedula").textContent = data.cedula;
     document.getElementById("nombre").textContent = data.nombre;
     document.getElementById("apellido").textContent = data.apellido;
@@ -16,7 +16,7 @@ async function consultarPerfil() {
     document.getElementById("zona").textContent = data.zona;
     document.getElementById("email").textContent = data.email;
 
-    // Autocompletar formulario (la cédula no editable)
+    // Autocompletar formulario de actualización
     document.getElementById("cedula-input").value = data.cedula;
     document.getElementById("nombre-input").value = data.nombre;
     document.getElementById("apellido-input").value = data.apellido;
@@ -27,28 +27,37 @@ async function consultarPerfil() {
 
   } catch (error) {
     console.error("❌ Error al cargar perfil:", error);
-    alert("Error al cargar los datos de perfil.");
+    document.getElementById("datos-usuario").innerHTML = "<p>Error al cargar datos de usuario.</p>";
   }
 }
 
+// ✅ Validación y envío del formulario
 document.getElementById("formulario").addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const email = document.getElementById("email-input").value;
-  if (!/@gmail\.com$|@hotmail\.com$|@outlook\.com$/.test(email)) {
+  const data = {};
+
+  // Recorre cada input y agrega solo los que tengan valor
+  ["nombre", "apellido", "telefono", "direccion", "zona", "email", "password"].forEach(campo => {
+    const valor = document.getElementById(`${campo}-input`).value.trim();
+    if (valor) data[campo] = valor;
+  });
+
+  // Validación opcional de email si fue editado
+  if (data.email && !(
+    data.email.endsWith("@gmail.com") ||
+    data.email.endsWith("@hotmail.com") ||
+    data.email.endsWith("@outlook.com")
+  )) {
     alert("El correo debe terminar en @gmail.com, @hotmail.com o @outlook.com");
+    document.getElementById("email-input").focus();
     return;
   }
 
-  const data = {
-    nombre: document.getElementById("nombre-input").value,
-    apellido: document.getElementById("apellido-input").value,
-    telefono: document.getElementById("telefono-input").value.replace(/\D/g, ""),
-    direccion: document.getElementById("direccion-input").value,
-    zona: document.getElementById("zona-input").value,
-    email: email,
-    password: document.getElementById("password-input").value
-  };
+  // Solo dígitos en teléfono si se edita
+  if (data.telefono) {
+    data.telefono = data.telefono.replace(/\D/g, "");
+  }
 
   try {
     const res = await fetch(`https://usuarios-1yw0.onrender.com/usuarios/${usuario_id}`, {
@@ -59,13 +68,15 @@ document.getElementById("formulario").addEventListener("submit", async (e) => {
 
     if (res.ok) {
       alert("Datos actualizados correctamente.");
-      consultarPerfil(); // Recargar datos actualizados
+      consultarPerfil(); // 🔄 Recarga datos actualizados
     } else {
-      alert("Error al actualizar los datos.");
+      const err = await res.json();
+      alert("Error al actualizar: " + (err.detail || "Intenta nuevamente"));
     }
+
   } catch (error) {
     console.error("❌ Error al actualizar:", error);
-    alert("Error al actualizar los datos.");
+    alert("Error de conexión con el servidor.");
   }
 });
 
