@@ -143,9 +143,11 @@ function eliminarProducto(index) {
 function actualizarResumen() {
   let subtotal = carrito.reduce((acc, p) => acc + p.precio * p.cantidad, 0);
   const usarTransporte = document.getElementById("usarTransporte").checked;
-  const envio = usarTransporte ? parseFloat(totalTransporte) : 0;
+  // const envio = usarTransporte ? parseFloat(totalTransporte) : 0;
+  const envio = 0;
   const iva = (subtotal + envio) * 0.15;
-  const estimacionTotal = subtotal + envio + iva;
+  // const estimacionTotal = subtotal + envio + iva;
+  const estimacionTotal = subtotal + iva;
 
   const lista = document.getElementById("lista-productos");
   lista.innerHTML = "";
@@ -158,6 +160,7 @@ function actualizarResumen() {
   document.getElementById("total-articulos").innerText = `$${subtotal.toFixed(2)}`;
   document.getElementById("subtotal").innerText = `$${subtotal.toFixed(2)}`;
   // document.getElementById("envio").innerText = `$${envio.toFixed(2)}`;
+  // document.getElementById("envio").innerText = "Asignado por admin";
   document.getElementById("iva").innerText = `$${iva.toFixed(2)}`;
   document.getElementById("estimacion-total").innerText = `$${estimacionTotal.toFixed(2)}`;
 }
@@ -181,9 +184,13 @@ function toggleTransporte() {
 paypal.Buttons({
   createOrder: function(data, actions) {
     const subtotal = carrito.reduce((acc, item) => acc + item.precio * item.cantidad, 0);
-    const envio = document.getElementById("usarTransporte").checked ? totalTransporte : 0;
-    const subtotalFinal = (subtotal + envio) * 0.15;
-    const totalFinal = subtotal + envio + subtotalFinal;
+    // const envio = document.getElementById("usarTransporte").checked ? totalTransporte : 0;
+    // const subtotalFinal = (subtotal + envio) * 0.15;
+    // const totalFinal = subtotal + envio + subtotalFinal;
+    const envio = 0;
+const subtotalFinal = subtotal * 0.15;
+const totalFinal = subtotal + subtotalFinal;
+
 
     if (totalFinal <= 0) {
       alert("No puedes pagar un total de $0.00. Agrega productos al carrito.");
