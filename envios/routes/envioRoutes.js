@@ -31,37 +31,10 @@ router.get("/transportes/:zona", async (req, res) => {
   res.json(filas);
 });
 
-// Registrar envío
-// router.post("/envios", async (req, res) => {
-//   const { id_pedido, direccion_entrega, zona_entrega, transporte_id } = req.body;
 
-//   if (!id_pedido || !direccion_entrega || !transporte_id) {
-//     return res.status(400).json({ mensaje: "Faltan campos requeridos" });
-//   }
-
-//   // const fecha = new Date();
-//   // fecha.setDate(fecha.getDate() + 2);
-//   // const fecha_estimada = fecha.toISOString().split("T")[0];
-// const fecha = new Date();
-// fecha.setDate(fecha.getDate() + 2);
-// const fecha_estimada = fecha.toISOString().slice(0, 19).replace('T', ' ');
-
-
-//   try {
-//     await db.execute(`
-//       INSERT INTO envios (id_pedido, direccion_entrega, transporte_id, estado, fecha_estimada, zona_entrega)
-//       VALUES (?, ?, ?, 'pendiente', ?, ?)
-//     `, [id_pedido, direccion_entrega, transporte_id, fecha_estimada, zona_entrega]);
-
-//     res.json({ mensaje: "Envío registrado", id_pedido, fecha_estimada });
-//   } catch (error) {
-//     console.error("❌ Error al registrar el envío:", error.message);
-//     res.status(500).json({ mensaje: "Error al registrar envío", error: error.message });
-//   }
-// });
 // Registrar envío
 router.post("/envios", async (req, res) => {
-  const { id_pedido, direccion_entrega, zona_entrega, transporte_id } = req.body;
+  const { id_pedido, id_cliente, direccion_entrega, zona_entrega, transporte_id } = req.body;
 
   if (!id_pedido || !direccion_entrega || !transporte_id) {
     return res.status(400).json({ mensaje: "Faltan campos requeridos" });
@@ -74,9 +47,9 @@ router.post("/envios", async (req, res) => {
 
   try {
     await db.execute(`
-      INSERT INTO envios (id_pedido, direccion_entrega, transporte_id, estado, fecha_estimada, zona_entrega)
-      VALUES (?, ?, ?, 'pendiente', ?, ?)
-    `, [id_pedido, direccion_entrega, transporte_id, fecha_estimada, zona_entrega]);
+      INSERT INTO envios (id_pedido, direccion_entrega, transporte_id, estado, fecha_estimada, zona_entrega,id_cliente)
+      VALUES (?, ?, ?, 'pendiente', ?, ?, ?)
+    `, [id_pedido, direccion_entrega, transporte_id, fecha_estimada, zona_entrega, id_cliente]);
 
     res.json({ mensaje: "Envío registrado", id_pedido, fecha_estimada });
   } catch (error) {
