@@ -36,9 +36,13 @@ router.get("/transportes/:zona", async (req, res) => {
 router.post("/envios", async (req, res) => {
   const { id_pedido, id_cliente, direccion_entrega, zona_entrega, transporte_id } = req.body;
 
-  if (!id_pedido || !direccion_entrega || !transporte_id) {
-    return res.status(400).json({ mensaje: "Faltan campos requeridos" });
-  }
+  // if (!id_pedido || !direccion_entrega || !transporte_id) {
+  //   return res.status(400).json({ mensaje: "Faltan campos requeridos" });
+  // }
+
+    if (!id_pedido || !direccion_entrega) { // 🔥 elimina transporte_id de validación obligatoria
+      return res.status(400).json({ mensaje: "Faltan campos requeridos" });
+    }
 
   // 🔥 Aquí reemplaza
   const fecha = new Date();
@@ -47,9 +51,14 @@ router.post("/envios", async (req, res) => {
 
   try {
     await db.execute(`
-      INSERT INTO envios (id_pedido, direccion_entrega, transporte_id, estado, fecha_estimada, zona_entrega,id_cliente)
-      VALUES (?, ?, ?, 'pendiente', ?, ?, ?)
+    INSERT INTO envios (id_pedido, direccion_entrega, transporte_id, estado, fecha_estimada, zona_entrega, id_cliente)
+    VALUES (?, ?, ?, 'pendiente', ?, ?, ?)
     `, [id_pedido, direccion_entrega, transporte_id, fecha_estimada, zona_entrega, id_cliente]);
+
+    // await db.execute(`
+    //   INSERT INTO envios (id_pedido, direccion_entrega, transporte_id, estado, fecha_estimada, zona_entrega,id_cliente)
+    //   VALUES (?, ?, ?, 'pendiente', ?, ?, ?)
+    // `, [id_pedido, direccion_entrega, transporte_id, fecha_estimada, zona_entrega, id_cliente]);
 
     res.json({ mensaje: "Envío registrado", id_pedido, fecha_estimada });
   } catch (error) {
@@ -87,5 +96,24 @@ router.get("/envios/usuario/:id_cliente", async (req, res) => {
     res.status(500).json({ mensaje: "Error al obtener envíos", error: error.message });
   }
 });
+
+
+// Asignar transporte a un envio
+router.put("/envios/:id", async (req, res) => {
+  const { id } = req.params;
+  const { transporte_id } = req.body;
+
+  if (!transporte_id) return res.status(400).json({ mensaje: "Falta transporte_id" });
+
+  try {
+    await db.execute(`UPDATE envios SET transporte_id = ? WHERE id_envio = ?`, [transporte_id, id]);
+    res.json({ mensaje: "Transporte asignado correctamente" });
+  } catch (error) {
+    console.error("❌ Error al asignar transporte:", error.message);
+    res.status(500).json({ mensaje: "Error al asignar transporte", error: error.message });
+  }
+});
+
+
 
 export default router;
