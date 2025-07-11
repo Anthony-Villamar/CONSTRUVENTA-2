@@ -170,6 +170,29 @@ async function asignarTransporte(id_envio) {
   }
 }
 
+async function cargarTransportes() {
+  const res = await fetch("https://construventa-2-1.onrender.com/transportes");
+  const transportes = await res.json();
+  const cont = document.getElementById("lista-transportes");
+  cont.innerHTML = "";
+
+  if (transportes.length === 0) {
+    cont.innerHTML = "<p>No hay transportes registrados.</p>";
+    return;
+  }
+
+  let html = `<table class="table"><tr><th>ID</th><th>Nombre</th><th>Capacidad</th><th>Precio</th></tr>`;
+  transportes.forEach(t => {
+    html += `<tr>
+      <td>${t.id}</td>
+      <td>${t.nombre}</td>
+      <td>${t.capacidad_max_kg} kg</td>
+      <td>$${t.precio}</td>
+    </tr>`;
+  });
+  html += `</table>`;
+  cont.innerHTML = html;
+}
 
 
 // ✅ Inicializar
@@ -177,5 +200,5 @@ async function asignarTransporte(id_envio) {
   await cargarAlertasStock();
   await cargarProductos();
    await cargarEnviosPendientes();
-  // await cargarPedidos();
+  await cargarTransportes();
 })();
