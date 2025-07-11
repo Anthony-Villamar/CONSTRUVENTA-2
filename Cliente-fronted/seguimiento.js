@@ -40,7 +40,7 @@ Object.values(envios).forEach(p => {
   const div = document.createElement("div");
   div.className = "envio";
   div.innerHTML = `
-    <h4>Pedido Global: ${p.id_pedido_global}</h4>
+    <h4>Pedido: ${p.id_pedido_global}</h4>
     <p>Transporte: ${p.transporte_nombre} ($${p.transporte_precio})</p>
     <p>Dirección: ${p.direccion_entrega}</p>
     <p>Zona: ${p.zona_entrega}</p>
