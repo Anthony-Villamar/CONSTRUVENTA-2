@@ -98,6 +98,17 @@ router.get("/envios/usuario/:id_cliente", async (req, res) => {
 });
 
 
+router.get("/envios/pendientes", async (req, res) => {
+  try {
+    const [filas] = await db.execute(`SELECT * FROM envios WHERE transporte_id IS NULL`);
+    res.json(filas);
+  } catch (error) {
+    console.error("❌ Error al obtener envíos pendientes:", error.message);
+    res.status(500).json({ mensaje: "Error al obtener envíos pendientes", error: error.message });
+  }
+});
+
+
 // Asignar transporte a un envio
 router.put("/envios/:id", async (req, res) => {
   const { id } = req.params;
