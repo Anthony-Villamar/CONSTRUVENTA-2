@@ -166,15 +166,16 @@ async function mostrarTransportesDisponibles(id_envio, zona) {
   });
   transportesHTML += "</select>";
 
-  // Muestra la lista de transportes para que el admin seleccione uno
+  // Buscar la fila correspondiente para este id_envio
   const row = document.getElementById(`envio-${id_envio}`);
-  row.innerHTML += `
-    <td>${transportesHTML}</td>
-    <td><button onclick="asignarTransporte(${id_envio})" id="asignar-${id_envio}">Confirmar</button></td>
-  `;
 
-  // Desactivar el botón de asignar para evitar que se añadan más opciones
-  document.getElementById(`asignar-${id_envio}`).disabled = true; 
+  // Solo agregar el botón si no existe aún
+  if (!row.querySelector(".transporte-select")) {
+    row.innerHTML += `
+      <td class="transporte-select">${transportesHTML}</td>
+      <td><button onclick="asignarTransporte(${id_envio})">Confirmar</button></td>
+    `;
+  }
 }
 
 // Asignar transporte a un envío
