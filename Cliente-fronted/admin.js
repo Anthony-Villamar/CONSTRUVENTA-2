@@ -168,7 +168,7 @@ async function cargarEnviosPendientes() {
     <th>ID</th><th>Dirección</th><th>Zona</th><th>Peso Total (kg)</th><th>Asignar Transporte</th></tr>`;
 
   envios.forEach(e => {
-    html += `<tr>
+    html += `<tr id="envio-${e.id_envio}">
       <td>${e.id_envio}</td>
       <td>${e.direccion_entrega}</td>
       <td>${e.zona_entrega}</td>
@@ -179,6 +179,7 @@ async function cargarEnviosPendientes() {
   html += `</table>`;
   cont.innerHTML = html;
 }
+
 
 // Mostrar los transportes disponibles para la zona del envío
 async function mostrarTransportesDisponibles(id_envio, zona) {
@@ -198,6 +199,7 @@ async function mostrarTransportesDisponibles(id_envio, zona) {
     <td><button onclick="asignarTransporte(${id_envio})">Confirmar</button></td>
   `;
 }
+
 // Asignar transporte a un envío
 async function asignarTransporte(id_envio) {
   const transporte_id = document.getElementById("transporte_id").value;
@@ -210,11 +212,29 @@ async function asignarTransporte(id_envio) {
 
   if (res.ok) {
     alert("✅ Transporte asignado correctamente.");
-    cargarEnviosPendientes();
+    cargarEnviosPendientes(); // Recarga la lista de envíos
   } else {
     alert("❌ Error al asignar transporte.");
   }
 }
+
+// // Asignar transporte a un envío
+// async function asignarTransporte(id_envio) {
+//   const transporte_id = document.getElementById("transporte_id").value;
+
+//   const res = await fetch(`https://construventa-2-1.onrender.com/envios/${id_envio}`, {
+//     method: "PUT",
+//     headers: { "Content-Type": "application/json" },
+//     body: JSON.stringify({ transporte_id })
+//   });
+
+//   if (res.ok) {
+//     alert("✅ Transporte asignado correctamente.");
+//     cargarEnviosPendientes();
+//   } else {
+//     alert("❌ Error al asignar transporte.");
+//   }
+// }
 
 
 // async function asignarTransporte(id_envio) {
