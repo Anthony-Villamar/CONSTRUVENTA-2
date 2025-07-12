@@ -128,6 +128,31 @@ async function reabastecerProducto(codigo) {
   }
 }
 
+// async function cargarEnviosPendientes() {
+//   const res = await fetch("https://construventa-2-1.onrender.com/envios/pendientes");
+//   const envios = await res.json();
+//   const cont = document.getElementById("envios-pendientes");
+//   cont.innerHTML = "";
+
+//   if (envios.length === 0) {
+//     cont.innerHTML = "<p>No hay envíos pendientes sin transporte.</p>";
+//     return;
+//   }
+
+//   let html = `<table class="table"><tr>
+//     <th>ID</th><th>Dirección</th><th>Zona</th><th>Peso Total (kg)</th><th>Asignar Transporte</th></tr>`;
+//   envios.forEach(e => {
+//     html += `<tr>
+//       <td>${e.id_envio}</td>
+//       <td>${e.direccion_entrega}</td>
+//       <td>${e.zona_entrega}</td>
+//       <td>${e.peso_total_kg.toFixed(2)} kg</td>
+//       <td><button onclick="asignarTransporte(${e.id_envio})">Asignar</button></td>
+//     </tr>`;
+//   });
+//   html += `</table>`;
+//   cont.innerHTML = html;
+// }
 async function cargarEnviosPendientes() {
   const res = await fetch("https://construventa-2-1.onrender.com/envios/pendientes");
   const envios = await res.json();
@@ -141,23 +166,41 @@ async function cargarEnviosPendientes() {
 
   let html = `<table class="table"><tr>
     <th>ID</th><th>Dirección</th><th>Zona</th><th>Peso Total (kg)</th><th>Asignar Transporte</th></tr>`;
+
   envios.forEach(e => {
     html += `<tr>
       <td>${e.id_envio}</td>
       <td>${e.direccion_entrega}</td>
       <td>${e.zona_entrega}</td>
       <td>${e.peso_total_kg.toFixed(2)} kg</td>
-      <td><button onclick="asignarTransporte(${e.id_envio})">Asignar</button></td>
+      <td><button onclick="mostrarTransportesDisponibles(${e.id_envio}, '${e.zona_entrega}')">Asignar</button></td>
     </tr>`;
   });
   html += `</table>`;
   cont.innerHTML = html;
 }
 
+// Mostrar los transportes disponibles para la zona del envío
+async function mostrarTransportesDisponibles(id_envio, zona) {
+  const res = await fetch(`https://construventa-2-1.onrender.com/transportes/${zona}`);
+  const transportes = await res.json();
 
+  let transportesHTML = "<select id='transporte_id'>";
+  transportes.forEach(t => {
+    transportesHTML += `<option value="${t.id}">${t.nombre} ($${t.precio})</option>`;
+  });
+  transportesHTML += "</select>";
+
+  // Muestra la lista de transportes para que el admin seleccione uno
+  const row = document.getElementById(`envio-${id_envio}`);
+  row.innerHTML += `
+    <td>${transportesHTML}</td>
+    <td><button onclick="asignarTransporte(${id_envio})">Confirmar</button></td>
+  `;
+}
+// Asignar transporte a un envío
 async function asignarTransporte(id_envio) {
-  const transporte_id = prompt("Ingrese ID de transporte a asignar:");
-  if (!transporte_id) return;
+  const transporte_id = document.getElementById("transporte_id").value;
 
   const res = await fetch(`https://construventa-2-1.onrender.com/envios/${id_envio}`, {
     method: "PUT",
@@ -172,6 +215,25 @@ async function asignarTransporte(id_envio) {
     alert("❌ Error al asignar transporte.");
   }
 }
+
+
+// async function asignarTransporte(id_envio) {
+//   const transporte_id = prompt("Ingrese ID de transporte a asignar:");
+//   if (!transporte_id) return;
+
+//   const res = await fetch(`https://construventa-2-1.onrender.com/envios/${id_envio}`, {
+//     method: "PUT",
+//     headers: { "Content-Type": "application/json" },
+//     body: JSON.stringify({ transporte_id })
+//   });
+
+//   if (res.ok) {
+//     alert("✅ Transporte asignado correctamente.");
+//     cargarEnviosPendientes();
+//   } else {
+//     alert("❌ Error al asignar transporte.");
+//   }
+// }
 
 async function cargarTransportes() {
   const res = await fetch("https://construventa-2-1.onrender.com/transportes");
