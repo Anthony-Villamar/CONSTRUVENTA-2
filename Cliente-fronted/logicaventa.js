@@ -126,10 +126,6 @@ function actualizarCarrito() {
   }
 }
 
-// function eliminarProducto(index) {
-//   carrito.splice(index, 1);
-//   actualizarCarrito();
-// }
 function eliminarProducto(index) {
   const producto = carrito[index];
   const cantidadInput = document.getElementById("cantidad_" + producto.codigo);
@@ -168,8 +164,6 @@ const usarTransporte = usarTransporteCheckbox ? usarTransporteCheckbox.checked :
 
   document.getElementById("total-articulos").innerText = `$${subtotal.toFixed(2)}`;
   document.getElementById("subtotal").innerText = `$${subtotal.toFixed(2)}`;
-  // document.getElementById("envio").innerText = `$${envio.toFixed(2)}`;
-  // document.getElementById("envio").innerText = "Asignado por admin";
   document.getElementById("iva").innerText = `$${iva.toFixed(2)}`;
   document.getElementById("estimacion-total").innerText = `$${estimacionTotal.toFixed(2)}`;
 }
@@ -198,9 +192,6 @@ function toggleTransporte() {
 paypal.Buttons({
   createOrder: function(data, actions) {
     const subtotal = carrito.reduce((acc, item) => acc + item.precio * item.cantidad, 0);
-    // const envio = document.getElementById("usarTransporte").checked ? totalTransporte : 0;
-    // const subtotalFinal = (subtotal + envio) * 0.15;
-    // const totalFinal = subtotal + envio + subtotalFinal;
     const envio = 0;
 const subtotalFinal = subtotal * 0.15;
 const totalFinal = subtotal + subtotalFinal;
@@ -272,31 +263,6 @@ if (document.getElementById("usarTransporte").checked) { // ✅ si pidió transp
   });
 }
 
-      // let envioPromise = Promise.resolve(); // default si no hay transporte
-      // let envioRealizado = false;
-  
-      // if (transporteSeleccionado) {
-      //   const usuarioRes = await fetch(`https://usuarios-1yw0.onrender.com/usuarios/${usuario_id}`);
-      //   const usuario = await usuarioRes.json();
-      //   const direccion = usuario.direccion;
-      //   const zona = usuario.zona;
-  
-      //   envioPromise = fetch("https://construventa-2-1.onrender.com/envios", {
-      //     method: "POST",
-      //     headers: { "Content-Type": "application/json" },
-      //     body: JSON.stringify({
-      //       id_pedido,
-      //       id_cliente: usuario_id,
-      //       direccion_entrega: direccion,
-      //       zona_entrega: zona,
-      //       transporte_id: transporteSeleccionado.id
-      //     })
-      //   }).then(res => {
-      //     if (!res.ok) throw new Error("❌ Error en /envios");
-      //     envioRealizado = true;
-      //     return res.json();
-      //   });
-      // }
   
       // ✅ 4. Ejecutar ambas promesas en paralelo
       const [facturaRes, envioRes] = await Promise.all([facturaPromise, envioPromise]);
