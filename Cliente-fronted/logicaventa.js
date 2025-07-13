@@ -241,7 +241,7 @@ let envioPromise = Promise.resolve(); // default si no hay transporte
 let envioRealizado = false;
 
 if (document.getElementById("usarTransporte").checked) { // ✅ si pidió transporte
-  const usuarioRes = await fetch(`https://usuarios-a9g3.onrender.com//usuarios/${usuario_id}`);
+  const usuarioRes = await fetch(`https://usuarios-a9g3.onrender.com/usuarios/${usuario_id}`);
   const usuario = await usuarioRes.json();
   const direccion = usuario.direccion;
   const zona = usuario.zona;
