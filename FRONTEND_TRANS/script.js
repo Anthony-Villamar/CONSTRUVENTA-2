@@ -56,8 +56,3 @@ function actualizarEstado(idEnvio, nuevoEstado) {
     body: JSON.stringify({ estado: nuevoEstado })
   }).then(() => window.location.reload());
 }
-
-function cerrarSesion() {
-  localStorage.removeItem("transporte_id");
-  window.location.href = "index.html";
-}
