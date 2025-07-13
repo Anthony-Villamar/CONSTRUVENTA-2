@@ -6,7 +6,7 @@ if (!admin_id) {
 }
 
 async function cargarProductos() {
-  const res = await fetch("https://inventario-d5am.onrender.com/api/productos");
+  const res = await fetch("https://inventario-gfxs.onrender.com/api/productos");
   const productos = await res.json();
   const cont = document.getElementById("lista-productos");
   cont.innerHTML = "";
@@ -51,7 +51,7 @@ async function registrarProducto(event) {
   // formData.append("imagen", document.getElementById("imagen").files[0]);
   formData.append("imagen_url", document.getElementById("imagen_url").value);
 
-  const res = await fetch("https://inventario-d5am.onrender.com/api/productos", {
+  const res = await fetch("https://inventario-gfxs.onrender.com/api/productos", {
     method: "POST",
     body: formData
   });
@@ -77,7 +77,7 @@ async function actualizarProducto(codigo) {
     descripcion: nuevaDescripcion
   };
 
-  const res = await fetch(`https://inventario-d5am.onrender.com/api/productos/${codigo}`, {
+  const res = await fetch(`https://inventario-gfxs.onrender.com/api/productos/${codigo}`, {
     method: "PUT",
     body: JSON.stringify(data),
     headers: { "Content-Type": "application/json" }
@@ -93,7 +93,7 @@ async function actualizarProducto(codigo) {
 
 // ✅ Listar productos con bajo stock y crear reabastecimiento
 async function cargarAlertasStock() {
-  const res = await fetch("https://inventario-d5am.onrender.com/api/alerta-stock");
+  const res = await fetch("https://inventario-gfxs.onrender.com/api/alerta-stock");
   const data = await res.json();
   const productos = data.productos;
   const cont = document.getElementById("alertas-stock");
@@ -114,7 +114,7 @@ async function reabastecerProducto(codigo) {
   const cantidad = prompt("Ingrese cantidad para reabastecer:", "20");
   if (!cantidad) return;
 
-  const res = await fetch(`https://inventario-d5am.onrender.com/api/productos/${codigo}/reabastecer`, {
+  const res = await fetch(`https://inventario-gfxs.onrender.com/api/productos/${codigo}/reabastecer`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ cantidad: parseInt(cantidad) })
