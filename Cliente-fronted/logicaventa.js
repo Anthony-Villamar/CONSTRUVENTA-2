@@ -5,7 +5,7 @@ const usuario_id = localStorage.getItem("cedula");
 
 // Cargar productos
 async function cargarProductos() {
-  const res = await fetch("https://inventario-d5am.onrender.com/api/productos");
+  const res = await fetch("https://inventario-gfxs.onrender.com/api/productos");
   const productos = await res.json();
   const contenedor = document.getElementById("productos");
   contenedor.innerHTML = "";
@@ -211,7 +211,7 @@ const totalFinal = subtotal + subtotalFinal;
   
     try {
       // ✅ 1. Crear pedido
-      const pedidoRes = await fetch("https://construventa-3.onrender.com/api/pedidos", {
+      const pedidoRes = await fetch("https://pedidos-sjte.onrender.com/api/pedidos", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -229,7 +229,7 @@ const totalFinal = subtotal + subtotalFinal;
       console.log("📝 id_pedido recibido:", id_pedido);
   
       // ✅ 2. Preparar factura promise
-      const facturaPromise = fetch("https://facturacion-dhh9.onrender.com/facturas", {
+      const facturaPromise = fetch("https://facturacion-hyna.onrender.com/facturas", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id_pedido, transporte_precio: totalTransporte })
@@ -241,7 +241,7 @@ let envioPromise = Promise.resolve(); // default si no hay transporte
 let envioRealizado = false;
 
 if (document.getElementById("usarTransporte").checked) { // ✅ si pidió transporte
-  const usuarioRes = await fetch(`https://usuarios-1yw0.onrender.com/usuarios/${usuario_id}`);
+  const usuarioRes = await fetch(`https://usuarios-a9g3.onrender.com//usuarios/${usuario_id}`);
   const usuario = await usuarioRes.json();
   const direccion = usuario.direccion;
   const zona = usuario.zona;
