@@ -129,7 +129,7 @@ async function reabastecerProducto(codigo) {
 }
 
 async function cargarEnviosPendientes() {
-  const res = await fetch("https://construventa-2-1.onrender.com/envios/pendientes");
+  const res = await fetch("https://envios-1czw.onrender.com/envios/pendientes");
   const envios = await res.json();
   const cont = document.getElementById("envios-pendientes");
   cont.innerHTML = "";
@@ -157,7 +157,7 @@ async function cargarEnviosPendientes() {
 
 
 async function mostrarTransportesDisponibles(id_envio, zona) {
-  const res = await fetch(`https://construventa-2-1.onrender.com/transportes/${zona}`);
+  const res = await fetch(`https://envios-1czw.onrender.com/transportes/${zona}`);
   const transportes = await res.json();
 
   let transportesHTML = "<select id='transporte_id'>";
@@ -182,7 +182,7 @@ async function mostrarTransportesDisponibles(id_envio, zona) {
 async function asignarTransporte(id_envio) {
   const transporte_id = document.getElementById("transporte_id").value;
 
-  const res = await fetch(`https://construventa-2-1.onrender.com/envios/${id_envio}`, {
+  const res = await fetch(`https://envios-1czw.onrender.com/envios/${id_envio}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ transporte_id })
@@ -199,7 +199,7 @@ async function asignarTransporte(id_envio) {
 
 
 async function cargarTransportes() {
-  const res = await fetch("https://construventa-2-1.onrender.com/transportes");
+  const res = await fetch("https://envios-1czw.onrender.com/transportes");
   const transportes = await res.json();
   const cont = document.getElementById("lista-transportes");
   cont.innerHTML = "";
