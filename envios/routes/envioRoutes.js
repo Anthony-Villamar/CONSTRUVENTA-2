@@ -36,10 +36,6 @@ router.get("/transportes/:zona", async (req, res) => {
 router.post("/envios", async (req, res) => {
   const { id_pedido, id_cliente, direccion_entrega, zona_entrega, transporte_id } = req.body;
 
-  // if (!id_pedido || !direccion_entrega || !transporte_id) {
-  //   return res.status(400).json({ mensaje: "Faltan campos requeridos" });
-  // }
-
     if (!id_pedido || !direccion_entrega) { // 🔥 elimina transporte_id de validación obligatoria
       return res.status(400).json({ mensaje: "Faltan campos requeridos" });
     }
@@ -54,11 +50,6 @@ router.post("/envios", async (req, res) => {
     INSERT INTO envios (id_pedido, direccion_entrega, transporte_id, estado, fecha_estimada, zona_entrega, id_cliente)
     VALUES (?, ?, ?, 'pendiente', ?, ?, ?)
     `, [id_pedido, direccion_entrega, transporte_id, fecha_estimada, zona_entrega, id_cliente]);
-
-    // await db.execute(`
-    //   INSERT INTO envios (id_pedido, direccion_entrega, transporte_id, estado, fecha_estimada, zona_entrega,id_cliente)
-    //   VALUES (?, ?, ?, 'pendiente', ?, ?, ?)
-    // `, [id_pedido, direccion_entrega, transporte_id, fecha_estimada, zona_entrega, id_cliente]);
 
     res.json({ mensaje: "Envío registrado", id_pedido, fecha_estimada });
   } catch (error) {
@@ -98,16 +89,6 @@ router.get("/envios/usuario/:id_cliente", async (req, res) => {
 });
 
 
-// router.get("/envios/pendientes", async (req, res) => {
-//   try {
-//     const [filas] = await db.execute(`SELECT * FROM envios WHERE transporte_id IS NULL`);
-//     res.json(filas);
-//   } catch (error) {
-//     console.error("❌ Error al obtener envíos pendientes:", error.message);
-//     res.status(500).json({ mensaje: "Error al obtener envíos pendientes", error: error.message });
-//   }
-// });
-
 router.get("/envios/pendientes", async (req, res) => {
   try {
     const [filas] = await db.execute(`
@@ -146,6 +127,72 @@ router.put("/envios/:id", async (req, res) => {
   }
 });
 
+// Ver envíos de un transportista (por transporte_id)
+router.get("/envios/transporte/:id", async (req, res) => {
+  const { id } = req.params;
 
+  try {
+    const [filas] = await db.execute(`
+      SELECT e.*, t.nombre AS transporte_nombre
+      FROM envios e
+      JOIN transportes t ON e.transporte_id = t.id
+      WHERE e.transporte_id = ?
+      ORDER BY e.fecha_estimada DESC
+    `, [id]);
+
+    res.json(filas);
+  } catch (error) {
+    console.error("❌ Error al obtener envíos del transportista:", error.message);
+    res.status(500).json({ mensaje: "Error al obtener envíos", error: error.message });
+  }
+});
+
+
+// Cambiar estado del envío (pendiente → en tránsito → entregado)
+router.put("/envios/:id/estado", async (req, res) => {
+  const { id } = req.params;
+  const { estado } = req.body;
+
+  const estadosValidos = ["pendiente", "en tránsito", "entregado"];
+  if (!estadosValidos.includes(estado)) {
+    return res.status(400).json({ mensaje: "Estado no válido" });
+  }
+
+  try {
+    await db.execute(`UPDATE envios SET estado = ? WHERE id_envio = ?`, [estado, id]);
+    res.json({ mensaje: "Estado actualizado correctamente" });
+  } catch (error) {
+    console.error("❌ Error al actualizar estado:", error.message);
+    res.status(500).json({ mensaje: "Error al actualizar estado", error: error.message });
+  }
+});
+
+// LOGIN de transportistas
+router.post("/transportistas/login", async (req, res) => {
+  const { usuario, contrasena } = req.body;
+
+  try {
+    const [rows] = await db.execute(
+      `SELECT * FROM usuarios_transporte WHERE usuario = ?`,
+      [usuario]
+    );
+
+    if (rows.length === 0) {
+      return res.status(401).json({ mensaje: "Usuario no encontrado" });
+    }
+
+    const user = rows[0];
+
+    // Comparación directa (si no usas bcrypt aún)
+    if (contrasena !== user.contrasena) {
+      return res.status(401).json({ mensaje: "Contraseña incorrecta" });
+    }
+
+    res.json({ transporte_id: user.transporte_id });
+  } catch (error) {
+    console.error("❌ Error en login de transportista:", error.message);
+    res.status(500).json({ mensaje: "Error en login", error: error.message });
+  }
+});
 
 export default router;
