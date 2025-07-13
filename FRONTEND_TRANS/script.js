@@ -1,0 +1,63 @@
+// LOGIN
+const loginForm = document.getElementById("loginForm");
+if (loginForm) {
+  loginForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const usuario = document.getElementById("usuario").value;
+    const contrasena = document.getElementById("contrasena").value;
+
+    const res = await fetch("http://localhost:3001/transportistas/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ usuario, contrasena })
+    });
+
+    const data = await res.json();
+    if (res.ok) {
+      localStorage.setItem("transporte_id", data.transporte_id);
+      window.location.href = "dashboard.html";
+    } else {
+      document.getElementById("error").innerText = data.mensaje;
+    }
+  });
+}
+
+// DASHBOARD
+const listaEnvios = document.getElementById("listaEnvios");
+if (listaEnvios) {
+  const transporteId = localStorage.getItem("transporte_id");
+  if (!transporteId) window.location.href = "index.html";
+
+  fetch(`http://localhost:3001/envios/transporte/${transporteId}`)
+    .then(res => res.json())
+    .then(envios => {
+      envios.forEach(envio => {
+        const div = document.createElement("div");
+        div.className = "envio";
+        div.innerHTML = `
+          <p><strong>ID:</strong> ${envio.id_envio} | <strong>Pedido:</strong> ${envio.id_pedido}</p>
+          <p><strong>Estado:</strong> ${envio.estado}</p>
+          <select onchange="actualizarEstado(${envio.id_envio}, this.value)">
+            <option disabled selected>Cambiar estado</option>
+            <option value="en tránsito">En tránsito</option>
+            <option value="entregado">Entregado</option>
+          </select>
+        `;
+        listaEnvios.appendChild(div);
+      });
+    });
+}
+
+function actualizarEstado(idEnvio, nuevoEstado) {
+  fetch(`http://localhost:3001/envios/${idEnvio}/estado`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ estado: nuevoEstado })
+  }).then(() => window.location.reload());
+}
+
+function cerrarSesion() {
+  localStorage.removeItem("transporte_id");
+  window.location.href = "index.html";
+}
