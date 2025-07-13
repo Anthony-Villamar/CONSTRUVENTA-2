@@ -24,7 +24,7 @@ router.post("/facturas", async (req, res) => {
 
   try {
     // Obtener detalles del pedido desde Laravel
-    const pedidoRes = await axios.get(`https://construventa-3.onrender.com/api/pedidos/${id_pedido}`);
+    const pedidoRes = await axios.get(`https://pedidos-sjte.onrender.com/api/pedidos/${id_pedido}`);
     const pedido = pedidoRes.data;
 
     if (!pedido || !pedido.productos || pedido.productos.length === 0) {
@@ -88,7 +88,7 @@ router.post("/facturas", async (req, res) => {
 
 //     try {
 //         // Obtener detalles del pedido desde Laravel
-//         const pedidoRes = await axios.get(`https://construventa-3.onrender.com/api/pedidos/${id_pedido}`);
+//         const pedidoRes = await axios.get(`https://pedidos-sjte.onrender.com/api/pedidos/${id_pedido}`);
 //         const pedido = pedidoRes.data;
 
 //         if (!pedido || !pedido.producto) {
