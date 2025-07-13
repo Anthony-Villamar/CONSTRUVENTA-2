@@ -40,7 +40,7 @@ if (listaEnvios) {
           <p><strong>Estado:</strong> ${envio.estado}</p>
           <select onchange="actualizarEstado(${envio.id_envio}, this.value)">
             <option disabled selected>Cambiar estado</option>
-            <option value="en tránsito">Pendiente</option>            
+            <option value="pendiente">Pendiente</option>            
             <option value="en tránsito">En tránsito</option>
             <option value="entregado">Entregado</option>
           </select>
