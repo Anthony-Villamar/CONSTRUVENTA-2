@@ -211,7 +211,7 @@ const totalFinal = subtotal + subtotalFinal;
   
     try {
       // ✅ 1. Crear pedido
-      const pedidoRes = await fetch("https://pedidos-sjte.onrender.com/api/pedidos", {
+      const pedidoRes = await fetch("https://pedidos-vi0u.onrender.com/api/pedidos", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
