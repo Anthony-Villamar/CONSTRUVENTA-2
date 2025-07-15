@@ -69,7 +69,7 @@ function calcularPesoTotal() {
 
 async function asignarTransportePorPeso() {
   const pesoTotal = calcularPesoTotal();
-  const res = await fetch("https://envios-1czw.onrender.com/transportes");
+  const res = await fetch("https://envios-cff4.onrender.com/transportes");
   const transportes = await res.json();
   const adecuado = transportes.find(t => pesoTotal <= t.capacidad_max_kg);
     const precioTransporte = document.getElementById("precioTransporte");
@@ -246,7 +246,7 @@ if (document.getElementById("usarTransporte").checked) { // ✅ si pidió transp
   const direccion = usuario.direccion;
   const zona = usuario.zona;
 
-  envioPromise = fetch("https://envios-1czw.onrender.com/envios", {
+  envioPromise = fetch("https://envios-cff4.onrender.com/envios", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
