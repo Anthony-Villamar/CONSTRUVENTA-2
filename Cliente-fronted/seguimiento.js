@@ -6,7 +6,7 @@ window.onload = () => {
 };
 
 async function cargarEnvios() {
-  const res = await fetch(`https://envios-1czw.onrender.com/envios/usuario/${usuario_id}`);
+  const res = await fetch(`https://envios-cff4.onrender.com/envios/usuario/${usuario_id}`);
   const lista = document.getElementById("lista-envios");
 
   if (!res.ok) {
