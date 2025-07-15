@@ -1,6 +1,6 @@
 
 
-const usuario_id = localStorage.getItem("cedula");
+const usuario_id = sessionStorage.getItem("cedula");
 
 async function listarCompras() {
   const fecha_inicio = document.getElementById("fecha_inicio").value;
