@@ -233,8 +233,8 @@ const totalFinal = subtotal + subtotalFinal;
       const facturaPromise = fetch("https://facturacion-cqr4.onrender.com/facturas", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        // body: JSON.stringify({ id_pedido, transporte_precio: totalTransporte })
-        body: JSON.stringify({ id_pedido_global, transporte_precio: totalTransporte })
+        body: JSON.stringify({ id_pedido, transporte_precio: totalTransporte })
+        // body: JSON.stringify({ id_pedido_global, transporte_precio: totalTransporte })
 
       });
   
