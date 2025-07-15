@@ -63,8 +63,8 @@
                 alert("Bienvenido " + data.nombre + " (Rol: " + data.rol + ")");
 
                 // Guardamos el usuario para después
-                localStorage.setItem("cedula", data.cedula);
-                localStorage.setItem("rol", data.rol);
+                sessionStorage.setItem("cedula", data.cedula);
+                sessionStorage.setItem("rol", data.rol);
                 
                 if (data.rol === "admin") {
                     window.location.href = "admin.html";
