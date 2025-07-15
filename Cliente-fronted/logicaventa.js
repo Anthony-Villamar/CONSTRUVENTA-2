@@ -226,13 +226,16 @@ const totalFinal = subtotal + subtotalFinal;
   
       const pedidoData = await pedidoRes.json();
       const id_pedido = pedidoData.ids_pedidos[0];
+      const id_pedido_global = pedidoData.id_pedido_global;
       console.log("📝 id_pedido recibido:", id_pedido);
   
       // ✅ 2. Preparar factura promise
       const facturaPromise = fetch("https://facturacion-cqr4.onrender.com/facturas", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id_pedido, transporte_precio: totalTransporte })
+        // body: JSON.stringify({ id_pedido, transporte_precio: totalTransporte })
+        body: JSON.stringify({ id_pedido_global, transporte_precio: totalTransporte })
+
       });
   
       // ✅ 3. Preparar envio promise si hay transporte seleccionado
