@@ -7,7 +7,7 @@ async function listarCompras() {
   const fecha_fin = document.getElementById("fecha_fin").value;
 
   // ➡️ Nuevo endpoint que debe devolver agrupados por id_pedido_global
-  let url = `https://pedidos-sjte.onrender.com/api/pedidos/usuario/${usuario_id}/por-global`;
+  let url = `https://pedidos-vi0u.onrender.com/api/pedidos/usuario/${usuario_id}/por-global`;
 
   if (fecha_inicio && fecha_fin) {
     url += `?fecha_inicio=${fecha_inicio}&fecha_fin=${fecha_fin}`;
