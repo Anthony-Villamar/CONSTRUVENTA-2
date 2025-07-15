@@ -1,6 +1,6 @@
 
 
-const admin_id = localStorage.getItem("cedula");
+const admin_id = sessionStorage.getItem("cedula");
 if (!admin_id) {
   window.location.href = "index.html";
 }
