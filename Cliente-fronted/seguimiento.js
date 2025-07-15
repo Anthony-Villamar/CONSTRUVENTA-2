@@ -1,4 +1,4 @@
-const usuario_id = localStorage.getItem("cedula");
+const usuario_id = sessionStorage.getItem("cedula");
 
 window.onload = () => {
   cargarEnvios();
