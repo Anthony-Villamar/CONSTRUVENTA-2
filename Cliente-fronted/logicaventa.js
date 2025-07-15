@@ -5,7 +5,7 @@ const usuario_id = localStorage.getItem("cedula");
 
 // Cargar productos
 async function cargarProductos() {
-  const res = await fetch("https://inventario-gfxs.onrender.com/api/productos");
+  const res = await fetch("https://inventario-u6ci.onrender.com/api/productos");
   const productos = await res.json();
   const contenedor = document.getElementById("productos");
   contenedor.innerHTML = "";
