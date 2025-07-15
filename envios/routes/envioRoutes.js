@@ -142,7 +142,7 @@ router.get("/envios/transporte/:id", async (req, res) => {
         u.zona AS cliente_zona
       FROM envios e
       JOIN transportes t ON e.transporte_id = t.id
-      JOIN usuarios u ON e.id_cliente = u.id_usuario
+      JOIN usuario u ON e.id_cliente = u.id_usuario
       WHERE e.transporte_id = ?
       ORDER BY e.fecha_estimada DESC
     `, [id]);
