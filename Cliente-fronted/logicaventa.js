@@ -229,7 +229,7 @@ const totalFinal = subtotal + subtotalFinal;
       console.log("📝 id_pedido recibido:", id_pedido);
   
       // ✅ 2. Preparar factura promise
-      const facturaPromise = fetch("https://facturacion-hyna.onrender.com/facturas", {
+      const facturaPromise = fetch("https://facturacion-cqr4.onrender.com/facturas", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id_pedido, transporte_precio: totalTransporte })
