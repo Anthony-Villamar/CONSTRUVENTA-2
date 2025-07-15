@@ -55,6 +55,23 @@ router.post("/facturas", async (req, res) => {
   }
 });
 
+
+// // CONSULTAR FACTURAS
+router.get("/facturas", async (req, res) => {
+    try {
+        const [facturas] = await db.execute(`
+            SELECT f.id_factura, f.id_pedido, f.fecha_emision, f.total, f.transporte_precio
+            FROM factura f
+            ORDER BY f.fecha_emision DESC
+        `);
+
+        res.json(facturas);
+    } catch (error) {
+        console.error("❌ Error al obtener facturas:", error.message);
+        res.status(500).json({ mensaje: "Error al obtener facturas" });
+    }
+});
+
 // GET /facturas/usuario/:id_cliente (para compras.js)
 router.get("/facturas/usuario/:id_cliente", async (req, res) => {
   const { id_cliente } = req.params;
