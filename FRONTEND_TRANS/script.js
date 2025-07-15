@@ -7,7 +7,7 @@ if (loginForm) {
     const usuario = document.getElementById("usuario").value;
     const contrasena = document.getElementById("contrasena").value;
 
-    const res = await fetch("https://envios-1czw.onrender.com/transportistas/login", {
+    const res = await fetch("https://envios-cff4.onrender.com/transportistas/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ usuario, contrasena })
@@ -29,7 +29,7 @@ if (listaEnvios) {
   const transporteId = localStorage.getItem("transporte_id");
   if (!transporteId) window.location.href = "index.html";
 
-  fetch(`https://envios-1czw.onrender.com/envios/transporte/${transporteId}`)
+  fetch(`https://envios-cff4.onrender.com/envios/transporte/${transporteId}`)
     .then(res => res.json())
     .then(envios => {
       envios.forEach(envio => {
@@ -51,7 +51,7 @@ if (listaEnvios) {
 }
 
 function actualizarEstado(idEnvio, nuevoEstado) {
-  fetch(`https://envios-1czw.onrender.com/envios/${idEnvio}/estado`, {
+  fetch(`https://envios-cff4.onrender.com/envios/${idEnvio}/estado`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ estado: nuevoEstado })
