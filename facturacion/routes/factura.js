@@ -58,6 +58,13 @@ router.post("/facturas", async (req, res) => {
     // Tomamos el primer id_pedido para cumplir con la tabla factura
     const id_pedido = pedidos[0].id_pedido;
 
+console.log("🧾 Valores a insertar:", {
+  id_pedido,
+  monto_total,
+  transporte_precio
+});
+
+     
     await db.execute(`
       INSERT INTO factura (id_pedido, fecha_emision, total, transporte_precio)
       VALUES (?, CONVERT_TZ(NOW(), '+00:00', '-05:00'), ?, ?)
