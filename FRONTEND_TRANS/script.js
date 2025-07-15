@@ -15,7 +15,7 @@ if (loginForm) {
 
     const data = await res.json();
     if (res.ok) {
-      localStorage.setItem("transporte_id", data.transporte_id);
+      sessionStorage.setItem("transporte_id", data.transporte_id);
       window.location.href = "dashboard.html";
     } else {
       document.getElementById("error").innerText = data.mensaje;
@@ -26,7 +26,7 @@ if (loginForm) {
 // DASHBOARD
 const listaEnvios = document.getElementById("listaEnvios");
 if (listaEnvios) {
-  const transporteId = localStorage.getItem("transporte_id");
+  const transporteId = sessionStorage.getItem("transporte_id");
   if (!transporteId) window.location.href = "index.html";
 
   fetch(`https://envios-cff4.onrender.com/envios/transporte/${transporteId}`)
