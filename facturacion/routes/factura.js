@@ -19,7 +19,7 @@ const db = await mysql.createConnection({
 router.post("/facturas", async (req, res) => {
   console.log("✅ Recibido POST /facturas:", req.body);
 
-  const { id_pedido_global, transporte_precio } = req.body;
+  const { id_pedido, id_pedido_global, transporte_precio } = req.body;
   if (!id_pedido_global) {
     return res.status(400).json({ mensaje: "Falta id_pedido_global" });
   }
