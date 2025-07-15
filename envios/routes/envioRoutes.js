@@ -133,9 +133,16 @@ router.get("/envios/transporte/:id", async (req, res) => {
 
   try {
     const [filas] = await db.execute(`
-      SELECT e.*, t.nombre AS transporte_nombre
+      SELECT 
+        e.*, 
+        t.nombre AS transporte_nombre,
+        u.nombre AS cliente_nombre,
+        u.usuario AS cliente_cedula,
+        u.direccion AS cliente_direccion,
+        u.zona AS cliente_zona
       FROM envios e
       JOIN transportes t ON e.transporte_id = t.id
+      JOIN usuarios u ON e.id_cliente = u.id_usuario
       WHERE e.transporte_id = ?
       ORDER BY e.fecha_estimada DESC
     `, [id]);
@@ -146,6 +153,25 @@ router.get("/envios/transporte/:id", async (req, res) => {
     res.status(500).json({ mensaje: "Error al obtener envíos", error: error.message });
   }
 });
+
+// router.get("/envios/transporte/:id", async (req, res) => {
+//   const { id } = req.params;
+
+//   try {
+//     const [filas] = await db.execute(`
+//       SELECT e.*, t.nombre AS transporte_nombre
+//       FROM envios e
+//       JOIN transportes t ON e.transporte_id = t.id
+//       WHERE e.transporte_id = ?
+//       ORDER BY e.fecha_estimada DESC
+//     `, [id]);
+
+//     res.json(filas);
+//   } catch (error) {
+//     console.error("❌ Error al obtener envíos del transportista:", error.message);
+//     res.status(500).json({ mensaje: "Error al obtener envíos", error: error.message });
+//   }
+// });
 
 
 // Cambiar estado del envío (pendiente → en tránsito → entregado)
