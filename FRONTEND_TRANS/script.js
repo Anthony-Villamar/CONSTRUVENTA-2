@@ -38,7 +38,7 @@ if (listaEnvios) {
         div.innerHTML = `
           <p><strong>ID:</strong> ${envio.id_envio} | <strong>Pedido:</strong> ${envio.id_pedido}</p>
           <p><strong>Estado:</strong> ${envio.estado}</p>
-          <p><strong>Cliente:</strong> ${envio.cliente_nombre} (${envio.cliente_cedula})</p>
+          <p><strong>Cliente:</strong> ${envio.cliente_nombre} ${envio.cliente_apellido} (${envio.cliente_cedula})</p>
           <p><strong>Dirección:</strong> ${envio.cliente_direccion}</p>
           <p><strong>Zona:</strong> ${envio.cliente_zona}</p>
           <select onchange="actualizarEstado(${envio.id_envio}, this.value)">
