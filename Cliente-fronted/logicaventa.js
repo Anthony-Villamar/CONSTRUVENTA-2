@@ -1,7 +1,7 @@
 let carrito = [];
 let transporteSeleccionado = null;
 let totalTransporte = 0;
-const usuario_id = localStorage.getItem("cedula");
+const usuario_id = sessionStorage.getItem("cedula");
 
 // Cargar productos
 async function cargarProductos() {
