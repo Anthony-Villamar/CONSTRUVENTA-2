@@ -5,120 +5,110 @@ import axios from "axios";
 const router = express.Router();
 
 // Conexión a base de datos plataforma_construventa
-const db = await mysql.createConnection({
-   host: process.env.DB_HOST || "localhost",
-  user: process.env.DB_USER || "root",
-  password: process.env.DB_PASSWORD || "",
-  database: process.env.DB_NAME || "plataforma_construventa",
-  port: process.env.DB_PORT || 3306,
-});
-
-
-
-// CREAR FACTURA Y CALCULAR TOTAL
 router.post("/facturas", async (req, res) => {
-    console.log("✅ Recibido POST /facturas:", req.body);
+  console.log("✅ Recibido POST /facturas:", req.body);
 
-    const { id_pedido_global, transporte_precio } = req.body;
-    if (!id_pedido_global) return res.status(400).json({ mensaje: "Falta id_pedido_global" });
+  const { id_pedido_global, transporte_precio } = req.body;
+  if (!id_pedido_global) return res.status(400).json({ mensaje: "Falta id_pedido_global" });
 
-    try {
-        // 🔍 Buscar todos los pedidos que comparten ese id_pedido_global
-        const [pedidos] = await db.execute(
-            `SELECT producto, cantidad FROM pedido WHERE id_pedido_global = ?`,
-            [id_pedido_global]
-        );
+  try {
+    const [pedidos] = await db.execute(
+      `SELECT producto, cantidad FROM pedido WHERE id_pedido_global = ?`,
+      [id_pedido_global]
+    );
 
-        if (pedidos.length === 0) {
-            return res.status(400).json({ mensaje: "No hay productos asociados a ese pedido global" });
-        }
-
-        let subtotalProductos = 0;
-
-        for (const pedido of pedidos) {
-            const [productoRows] = await db.execute(
-                `SELECT precio FROM producto WHERE codigo_producto = ?`,
-                [pedido.producto]
-            );
-
-            if (productoRows.length === 0) {
-                return res.status(400).json({ mensaje: `Producto no encontrado: ${pedido.producto}` });
-            }
-
-            const precio = parseFloat(productoRows[0].precio);
-            subtotalProductos += precio * pedido.cantidad;
-        }
-
-        const subtotalConTransporte = subtotalProductos + (parseFloat(transporte_precio) || 0);
-        const iva = subtotalConTransporte * 0.15;
-        const monto_total = subtotalConTransporte + iva;
-
-        await db.execute(
-            `INSERT INTO factura (id_pedido, fecha_emision, total, transporte_precio)
-             VALUES (?, CONVERT_TZ(NOW(), '+00:00', '-05:00'), ?, ?)`,
-            [id_pedido_global, monto_total, transporte_precio]
-        );
-
-        console.log("✅ Factura generada correctamente");
-        res.json({
-            mensaje: "Factura generada",
-            subtotal: subtotalConTransporte,
-            iva,
-            monto_total
-        });
-
-    } catch (err) {
-        console.error("❌ Error al generar factura:", err.response?.data || err.message || err);
-        res.status(500).json({ mensaje: "Error al generar factura" });
+    if (pedidos.length === 0) {
+      return res.status(400).json({ mensaje: "No hay productos asociados a ese pedido global" });
     }
+
+    let subtotalProductos = 0;
+    for (const pedido of pedidos) {
+      const [productoRows] = await db.execute(
+        `SELECT precio FROM producto WHERE codigo_producto = ?`,
+        [pedido.producto]
+      );
+      if (productoRows.length === 0) {
+        return res.status(400).json({ mensaje: `Producto no encontrado: ${pedido.producto}` });
+      }
+      const precio = parseFloat(productoRows[0].precio);
+      subtotalProductos += precio * pedido.cantidad;
+    }
+
+    const iva = subtotalProductos * 0.15;
+    const total = subtotalProductos + iva + (parseFloat(transporte_precio) || 0);
+
+    await db.execute(
+      `INSERT INTO factura (id_pedido, fecha_emision, total, transporte_precio)
+       VALUES (?, CONVERT_TZ(NOW(), '+00:00', '-05:00'), ?, ?)`,
+      [id_pedido_global, total, transporte_precio]
+    );
+
+    res.json({
+      mensaje: "Factura generada",
+      subtotal: subtotalProductos,
+      iva,
+      transporte: parseFloat(transporte_precio) || 0,
+      total
+    });
+
+  } catch (err) {
+    console.error("❌ Error al generar factura:", err.message);
+    res.status(500).json({ mensaje: "Error al generar factura" });
+  }
 });
 
+// const db = await mysql.createConnection({
+//    host: process.env.DB_HOST || "localhost",
+//   user: process.env.DB_USER || "root",
+//   password: process.env.DB_PASSWORD || "",
+//   database: process.env.DB_NAME || "plataforma_construventa",
+//   port: process.env.DB_PORT || 3306,
+// });
 
 
+
+// // CREAR FACTURA Y CALCULAR TOTAL
 // router.post("/facturas", async (req, res) => {
 //     console.log("✅ Recibido POST /facturas:", req.body);
 
-//     const { id_pedido, transporte_precio } = req.body;
-//     if (!id_pedido) return res.status(400).json({ mensaje: "Falta id_pedido" });
+//     const { id_pedido_global, transporte_precio } = req.body;
+//     if (!id_pedido_global) return res.status(400).json({ mensaje: "Falta id_pedido_global" });
 
 //     try {
-//         // Obtener detalles del pedido desde Laravel
-//         const pedidoRes = await axios.get(`https://pedidos-vi0u.onrender.com/api/pedidos/${id_pedido}`);
-//         const pedido = pedidoRes.data;
-
-//         if (!pedido || !pedido.producto) {
-//             return res.status(400).json({ mensaje: "El pedido no tiene producto" });
-//         }
-
-//         // Obtener precio del producto desde la base de datos producto
-//         const [productoRows] = await db.execute(
-//             `SELECT precio FROM producto WHERE codigo_producto = ?`,
-//             [pedido.producto]
+//         // 🔍 Buscar todos los pedidos que comparten ese id_pedido_global
+//         const [pedidos] = await db.execute(
+//             `SELECT producto, cantidad FROM pedido WHERE id_pedido_global = ?`,
+//             [id_pedido_global]
 //         );
 
-//         if (productoRows.length === 0) {
-//             return res.status(400).json({ mensaje: "Producto no encontrado" });
+//         if (pedidos.length === 0) {
+//             return res.status(400).json({ mensaje: "No hay productos asociados a ese pedido global" });
 //         }
 
-//         const precioProducto = parseFloat(productoRows[0].precio);
-//         const subtotalProductos = precioProducto * pedido.cantidad;
+//         let subtotalProductos = 0;
+
+//         for (const pedido of pedidos) {
+//             const [productoRows] = await db.execute(
+//                 `SELECT precio FROM producto WHERE codigo_producto = ?`,
+//                 [pedido.producto]
+//             );
+
+//             if (productoRows.length === 0) {
+//                 return res.status(400).json({ mensaje: `Producto no encontrado: ${pedido.producto}` });
+//             }
+
+//             const precio = parseFloat(productoRows[0].precio);
+//             subtotalProductos += precio * pedido.cantidad;
+//         }
 
 //         const subtotalConTransporte = subtotalProductos + (parseFloat(transporte_precio) || 0);
 //         const iva = subtotalConTransporte * 0.15;
 //         const monto_total = subtotalConTransporte + iva;
 
-//         console.log("🧾 Insertando factura con:", {
-//             id_pedido,
-//             subtotal: subtotalConTransporte,
-//             iva,
-//             monto_total
-//         });
-
-//         // Insertar en la tabla de factura
 //         await db.execute(
 //             `INSERT INTO factura (id_pedido, fecha_emision, total, transporte_precio)
 //              VALUES (?, CONVERT_TZ(NOW(), '+00:00', '-05:00'), ?, ?)`,
-//             [id_pedido, monto_total, transporte_precio]
+//             [id_pedido_global, monto_total, transporte_precio]
 //         );
 
 //         console.log("✅ Factura generada correctamente");
