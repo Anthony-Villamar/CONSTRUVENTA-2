@@ -25,11 +25,10 @@ router.post("/facturas", async (req, res) => {
   }
 
   try {
-    // 1. Obtener todos los pedidos relacionados al id_pedido_global
-    const [pedidos] = await db.execute(
-      `SELECT * FROM pedido WHERE id_pedido_global = ?`,
-      [id_pedido_global]
-    );
+    // Traer todos los pedidos de esa compra global
+    const [pedidos] = await db.execute(`
+      SELECT * FROM pedido WHERE id_pedido_global = ?
+    `, [id_pedido_global]);
 
     if (pedidos.length === 0) {
       return res.status(404).json({ mensaje: "No se encontraron pedidos" });
@@ -37,18 +36,17 @@ router.post("/facturas", async (req, res) => {
 
     let subtotal = 0;
 
-    for (const p of pedidos) {
-      const [producto] = await db.execute(
-        `SELECT precio FROM producto WHERE codigo_producto = ?`,
-        [p.codigo_producto]
-      );
+    for (const pedido of pedidos) {
+      const [productoRows] = await db.execute(`
+        SELECT precio FROM producto WHERE codigo_producto = ?
+      `, [pedido.codigo_producto]);
 
-      if (producto.length === 0) {
-        return res.status(404).json({ mensaje: `Producto no encontrado: ${p.codigo_producto}` });
+      if (productoRows.length === 0) {
+        return res.status(400).json({ mensaje: `Producto no encontrado: ${pedido.codigo_producto}` });
       }
 
-      const precio = parseFloat(producto[0].precio);
-      subtotal += precio * p.cantidad;
+      const precio = parseFloat(productoRows[0].precio);
+      subtotal += precio * pedido.cantidad;
     }
 
     const transporte = parseFloat(transporte_precio) || 0;
@@ -56,10 +54,13 @@ router.post("/facturas", async (req, res) => {
     const iva = subtotalConTransporte * 0.15;
     const monto_total = subtotalConTransporte + iva;
 
-   await db.execute(`
-     INSERT INTO factura (id_pedido, fecha_emision, total, transporte_precio)
-     VALUES (?, CONVERT_TZ(NOW(), '+00:00', '-05:00'), ?, ?)
-   `, [id_pedido, monto_total, transporte_precio]);
+    // Usar el primer id_pedido solo como referencia para la factura
+    const id_pedido = pedidos[0].id_pedido;
+
+    await db.execute(`
+      INSERT INTO factura (id_pedido, fecha_emision, total, transporte_precio)
+      VALUES (?, CONVERT_TZ(NOW(), '+00:00', '-05:00'), ?, ?)
+    `, [id_pedido, monto_total, transporte]);
 
     console.log("✅ Factura generada correctamente");
     res.json({
