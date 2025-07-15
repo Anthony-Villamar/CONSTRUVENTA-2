@@ -59,7 +59,7 @@ router.post("/facturas", async (req, res) => {
    await db.execute(`
      INSERT INTO factura (id_pedido, fecha_emision, total, transporte_precio)
      VALUES (?, CONVERT_TZ(NOW(), '+00:00', '-05:00'), ?, ?)
-   `, [id_pedido_global, monto_total, transporte_precio ?? null]);
+   `, [id_pedido, monto_total, transporte_precio ?? null]);
 
     console.log("✅ Factura generada correctamente");
     res.json({
