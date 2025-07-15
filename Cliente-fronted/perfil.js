@@ -2,7 +2,7 @@ const usuario_id = localStorage.getItem("cedula");
 
 async function consultarPerfil() {
   try {
-    const res = await fetch(`https://usuarios-a9g3.onrender.com/usuarios/${usuario_id}`);
+    const res = await fetch(`https://construventa-2-36ul.onrender.com/usuarios/${usuario_id}`);
     if (!res.ok) throw new Error("No se pudo obtener el usuario");
 
     const data = await res.json();
@@ -60,7 +60,7 @@ document.getElementById("formulario").addEventListener("submit", async (e) => {
   }
 
   try {
-    const res = await fetch(`https://usuarios-a9g3.onrender.com/usuarios/${usuario_id}`, {
+    const res = await fetch(`https://construventa-2-36ul.onrender.com/usuarios/${usuario_id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data)
