@@ -19,7 +19,7 @@ const db = await mysql.createConnection({
 router.post("/facturas", async (req, res) => {
   console.log("✅ Recibido POST /facturas:", req.body);
 
-  const { id_pedido_global } = req.body;
+  const { id_pedido_global, transporte_precio } = req.body;
   if (!id_pedido_global) {
     return res.status(400).json({ mensaje: "Falta id_pedido_global" });
   }
@@ -51,16 +51,23 @@ router.post("/facturas", async (req, res) => {
       subtotal += precio * p.cantidad;
     }
 
-    const iva = subtotal * 0.15;
-    const total = subtotal + iva;
+    const transporte = parseFloat(transporte_precio) || 0;
+    const subtotalConTransporte = subtotal + transporte;
+    const iva = subtotalConTransporte * 0.15;
+    const monto_total = subtotalConTransporte + iva;
 
     await db.execute(`
       INSERT INTO factura (id_pedido, fecha_emision, total, transporte_precio)
-      VALUES (?, CONVERT_TZ(NOW(), '+00:00', '-05:00'), ?, NULL)
-    `, [id_pedido_global, total]);
+      VALUES (?, CONVERT_TZ(NOW(), '+00:00', '-05:00'), ?, ?)
+    `, [id_pedido_global, monto_total, transporte]);
 
     console.log("✅ Factura generada correctamente");
-    res.json({ mensaje: "Factura generada", subtotal, iva, monto_total: total });
+    res.json({
+      mensaje: "Factura generada",
+      subtotal: subtotalConTransporte,
+      iva,
+      monto_total
+    });
 
   } catch (err) {
     console.error("❌ Error al generar factura:", err.message);
