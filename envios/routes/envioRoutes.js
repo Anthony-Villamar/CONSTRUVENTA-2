@@ -137,12 +137,13 @@ router.get("/envios/transporte/:id", async (req, res) => {
         e.*, 
         t.nombre AS transporte_nombre,
         u.nombre AS cliente_nombre,
-        u.usuario AS cliente_cedula,
+        u.apellido AS cliente_apellido,
+        u.id_cliente AS cliente_cedula,
         u.direccion AS cliente_direccion,
         u.zona AS cliente_zona
       FROM envios e
       JOIN transportes t ON e.transporte_id = t.id
-      JOIN usuario u ON e.id_cliente = u.id_usuario
+      JOIN usuario u ON e.id_cliente = u.id_cliente
       WHERE e.transporte_id = ?
       ORDER BY e.fecha_estimada DESC
     `, [id]);
@@ -153,7 +154,6 @@ router.get("/envios/transporte/:id", async (req, res) => {
     res.status(500).json({ mensaje: "Error al obtener envíos", error: error.message });
   }
 });
-
 // router.get("/envios/transporte/:id", async (req, res) => {
 //   const { id } = req.params;
 
