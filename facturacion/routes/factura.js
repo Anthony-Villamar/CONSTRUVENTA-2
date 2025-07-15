@@ -19,16 +19,17 @@ const db = await mysql.createConnection({
 router.post("/facturas", async (req, res) => {
   console.log("✅ Recibido POST /facturas:", req.body);
 
-  const { id_pedido, id_pedido_global, transporte_precio } = req.body;
+  const { id_pedido_global, transporte_precio } = req.body;
   if (!id_pedido_global) {
     return res.status(400).json({ mensaje: "Falta id_pedido_global" });
   }
 
   try {
-    // Traer todos los pedidos de esa compra global
-    const [pedidos] = await db.execute(`
-      SELECT * FROM pedido WHERE id_pedido_global = ?
-    `, [id_pedido_global]);
+    // Obtener todos los pedidos relacionados
+    const [pedidos] = await db.execute(
+      `SELECT * FROM pedido WHERE id_pedido_global = ?`,
+      [id_pedido_global]
+    );
 
     if (pedidos.length === 0) {
       return res.status(404).json({ mensaje: "No se encontraron pedidos" });
@@ -36,17 +37,17 @@ router.post("/facturas", async (req, res) => {
 
     let subtotal = 0;
 
-    for (const pedido of pedidos) {
-      const [productoRows] = await db.execute(`
-        SELECT precio FROM producto WHERE codigo_producto = ?
-      `, [pedido.codigo_producto]);
+    for (const p of pedidos) {
+      const [producto] = await db.execute(
+        `SELECT precio FROM producto WHERE codigo_producto = ?`,
+        [p.codigo_producto]
+      );
 
-      if (productoRows.length === 0) {
-        return res.status(400).json({ mensaje: `Producto no encontrado: ${pedido.codigo_producto}` });
+      if (producto.length === 0) {
+        return res.status(404).json({ mensaje: `Producto no encontrado: ${p.codigo_producto}` });
       }
 
-      const precio = parseFloat(productoRows[0].precio);
-      subtotal += precio * pedido.cantidad;
+      subtotal += parseFloat(producto[0].precio) * p.cantidad;
     }
 
     const transporte = parseFloat(transporte_precio) || 0;
@@ -54,7 +55,7 @@ router.post("/facturas", async (req, res) => {
     const iva = subtotalConTransporte * 0.15;
     const monto_total = subtotalConTransporte + iva;
 
-    // Usar el primer id_pedido solo como referencia para la factura
+    // Usamos uno de los pedidos como referencia para la factura
     const id_pedido = pedidos[0].id_pedido;
 
     await db.execute(`
@@ -75,6 +76,7 @@ router.post("/facturas", async (req, res) => {
     res.status(500).json({ mensaje: "Error al generar factura" });
   }
 });
+
 
 
 // router.post("/facturas", async (req, res) => {
