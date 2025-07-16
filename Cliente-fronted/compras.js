@@ -32,7 +32,7 @@ async function listarCompras() {
         <p><b>Factura:</b> ${factura.numero_factura}</p>
         <p><b>ID Pedido:</b> ${factura.id_pedido_global}</p>
         <p><b>Fecha:</b> ${factura.fecha_compra}</p>
-        <p><b>Total compra productos (ya con IVA 15%):</b> $${(subtotal + iva).toFixed(2)}</p>
+        <p><b>Total compra productos:</b> $${(subtotal + iva).toFixed(2)}</p>
         <p><b>Total envío:</b> $${transporte.toFixed(2)}</p>
         <p><b>Total:</b> $${total.toFixed(2)}</p>
         <p><b>Productos:</b></p>
