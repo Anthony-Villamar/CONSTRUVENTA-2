@@ -65,7 +65,7 @@ router.get("/envios/usuario/:id_cliente", async (req, res) => {
   const { id_cliente } = req.params;
 
   try {
-    const [filas] = await db.execute(
+    const [filas] = await db.execute(`
       SELECT 
         e.*, 
         p.id_pedido_global, 
@@ -79,7 +79,7 @@ router.get("/envios/usuario/:id_cliente", async (req, res) => {
       WHERE p.id_cliente = ?
       GROUP BY e.id_envio, p.id_pedido_global
       ORDER BY e.fecha_estimada DESC
-    , [id_cliente]);
+    `, [id_cliente]);
 
     res.json(filas);
   } catch (error) {
@@ -91,7 +91,7 @@ router.get("/envios/usuario/:id_cliente", async (req, res) => {
 
 router.get("/envios/pendientes", async (req, res) => {
   try {
-    const [filas] = await db.execute(
+    const [filas] = await db.execute(`
       SELECT e.*, 
         IFNULL((
           SELECT SUM(pr.peso_kg * p.cantidad)
@@ -101,7 +101,7 @@ router.get("/envios/pendientes", async (req, res) => {
         ), 0) AS peso_total_kg
       FROM envios e
       WHERE e.transporte_id IS NULL
-    );
+    `);
     res.json(filas);
   } catch (error) {
     console.error("❌ Error al obtener envíos pendientes:", error.message);
@@ -119,7 +119,7 @@ router.put("/envios/:id", async (req, res) => {
   if (!transporte_id) return res.status(400).json({ mensaje: "Falta transporte_id" });
 
   try {
-    await db.execute(UPDATE envios SET transporte_id = ? WHERE id_envio = ?, [transporte_id, id]);
+    await db.execute(`UPDATE envios SET transporte_id = ? WHERE id_envio = ?`, [transporte_id, id]);
     res.json({ mensaje: "Transporte asignado correctamente" });
   } catch (error) {
     console.error("❌ Error al asignar transporte:", error.message);
