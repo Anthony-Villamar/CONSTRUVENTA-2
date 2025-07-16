@@ -190,12 +190,12 @@ async function asignarTransporte(id_envio) {
 
   if (res.ok) {
     alert("✅ Transporte asignado correctamente.");
-    // Recargar los datos de las compras para mostrar el precio actualizado
-    cargarCompras();
+    cargarCompras();  // Recargar las compras con el precio actualizado
   } else {
     alert("❌ Error al asignar transporte.");
   }
 }
+
 
 async function cargarCompras() {
   // Aquí deberías cargar las compras, tal vez obteniendo el precio actualizado desde la base de datos.
