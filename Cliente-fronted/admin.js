@@ -182,6 +182,12 @@ async function mostrarTransportesDisponibles(id_envio, zona) {
 async function asignarTransporte(id_envio) {
   const transporte_id = document.getElementById("transporte_id").value;
 
+  // Verificar que se haya seleccionado un transporte
+  if (!transporte_id) {
+    alert("❌ Debes seleccionar un transporte.");
+    return;
+  }
+
   const res = await fetch(`https://envios-cff4.onrender.com/envios/${id_envio}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
@@ -190,12 +196,12 @@ async function asignarTransporte(id_envio) {
 
   if (res.ok) {
     alert("✅ Transporte asignado correctamente.");
-    cargarCompras();  // Recargar las compras con el precio actualizado
+    // Recargar los datos de los envíos para mostrar el precio actualizado
+    cargarEnviosPendientes();
   } else {
     alert("❌ Error al asignar transporte.");
   }
 }
-
 
 async function cargarCompras() {
   // Aquí deberías cargar las compras, tal vez obteniendo el precio actualizado desde la base de datos.
