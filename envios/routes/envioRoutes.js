@@ -111,6 +111,22 @@ router.get("/envios/pendientes", async (req, res) => {
 
 
 
+// // Asignar transporte a un envio
+// router.put("/envios/:id", async (req, res) => {
+//   const { id } = req.params;
+//   const { transporte_id } = req.body;
+
+//   if (!transporte_id) return res.status(400).json({ mensaje: "Falta transporte_id" });
+
+//   try {
+//     await db.execute(`UPDATE envios SET transporte_id = ? WHERE id_envio = ?`, [transporte_id, id]);
+//     res.json({ mensaje: "Transporte asignado correctamente" });
+//   } catch (error) {
+//     console.error("❌ Error al asignar transporte:", error.message);
+//     res.status(500).json({ mensaje: "Error al asignar transporte", error: error.message });
+//   }
+// });
+
 // Asignar transporte a un envio
 router.put("/envios/:id", async (req, res) => {
   const { id } = req.params;
@@ -119,8 +135,17 @@ router.put("/envios/:id", async (req, res) => {
   if (!transporte_id) return res.status(400).json({ mensaje: "Falta transporte_id" });
 
   try {
+    // Primero actualizamos el transporte del envío
     await db.execute(`UPDATE envios SET transporte_id = ? WHERE id_envio = ?`, [transporte_id, id]);
-    res.json({ mensaje: "Transporte asignado correctamente" });
+
+    // Ahora obtenemos el precio del transporte asignado
+    const [envio] = await db.execute(`SELECT * FROM envios WHERE id_envio = ?`, [id]);
+    const precio_transporte = envio.transporte_id ? (await db.execute(`SELECT precio FROM transportes WHERE id = ?`, [envio.transporte_id]))[0][0].precio : 0;
+
+    // Actualizamos el precio del transporte en la tabla factura
+    await db.execute(`UPDATE factura SET transporte_precio = ? WHERE id_pedido = ?`, [precio_transporte, envio.id_pedido]);
+
+    res.json({ mensaje: "Transporte asignado y precio actualizado correctamente" });
   } catch (error) {
     console.error("❌ Error al asignar transporte:", error.message);
     res.status(500).json({ mensaje: "Error al asignar transporte", error: error.message });
