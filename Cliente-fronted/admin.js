@@ -190,11 +190,53 @@ async function asignarTransporte(id_envio) {
 
   if (res.ok) {
     alert("✅ Transporte asignado correctamente.");
-    cargarEnviosPendientes(); // Recarga la lista de envíos
+    // Recargar los datos de las compras para mostrar el precio actualizado
+    cargarCompras();
   } else {
     alert("❌ Error al asignar transporte.");
   }
 }
+
+async function cargarCompras() {
+  // Aquí deberías cargar las compras, tal vez obteniendo el precio actualizado desde la base de datos.
+  const res = await fetch("https://construventa-1.onrender.com/api/compras");
+  const compras = await res.json();
+
+  // Actualizar la UI con la nueva información
+  // Mostrar los datos actualizados con el transporte asignado y el precio en la interfaz de usuario
+  const contenedor = document.getElementById("lista-compras");
+  contenedor.innerHTML = "";
+  compras.forEach(compra => {
+    const div = document.createElement("div");
+    div.innerHTML = `
+      <p><b>Factura:</b> ${compra.numero_factura}</p>
+      <p><b>Total compra productos (ya con IVA 15%):</b> $${compra.total_compra_productos}</p>
+      <p><b>Total envío:</b> $${compra.transporte_precio}</p>
+      <p><b>Total:</b> $${compra.total}</p>
+      <p><b>Productos:</b></p>
+      <ul>
+        ${compra.productos.map(p => `<li>${p}</li>`).join('')}
+      </ul>
+    `;
+    contenedor.appendChild(div);
+  });
+}
+// async function asignarTransporte(id_envio) {
+//   const transporte_id = document.getElementById("transporte_id").value;
+
+//   const res = await fetch(`https://envios-cff4.onrender.com/envios/${id_envio}`, {
+//     method: "PUT",
+//     headers: { "Content-Type": "application/json" },
+//     body: JSON.stringify({ transporte_id })
+//   });
+
+//   if (res.ok) {
+//     alert("✅ Transporte asignado correctamente.");
+//     cargarEnviosPendientes(); // Recarga la lista de envíos
+//   } else {
+//     alert("❌ Error al asignar transporte.");
+//   }
+// }
 
 
 
