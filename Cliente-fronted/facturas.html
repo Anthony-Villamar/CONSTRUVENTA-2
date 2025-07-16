@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Facturas</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Mis Facturas</h1>
+    </header>
+    
+    <section id="facturas-section">
+        <p>Filtra tus facturas por fecha:</p>
+        <form id="filtro-fechas">
+            <label for="fecha_inicio">Desde:</label>
+            <input type="date" id="fecha_inicio" name="fecha_inicio">
+            <label for="fecha_fin">Hasta:</label>
+            <input type="date" id="fecha_fin" name="fecha_fin">
+            <button type="submit">Filtrar</button>
+        </form>
+        
+        <div id="facturas-lista">
+            <!-- Las facturas se cargarán aquí -->
+        </div>
+    </section>
+    
+    <script>
+        const usuario_id = sessionStorage.getItem("cedula");
+        // Función para cargar las facturas
+        async function cargarFacturas() {
+          const fecha_inicio = document.getElementById("fecha_inicio").value;
+          const fecha_fin = document.getElementById("fecha_fin").value;
+          
+          let url = `https://facturacion-cqr4.onrender.com/facturas/usuario/${usuario_id}`;
+          if (fecha_inicio && fecha_fin) {
+            url += `?fecha_inicio=${fecha_inicio}&fecha_fin=${fecha_fin}`;
+          }
+        
+          try {
+            const res = await fetch(url);
+            const facturas = await res.json();
+        
+            const contenedor = document.getElementById("facturas-lista");
+            contenedor.innerHTML = "";
+        
+            if (facturas.length === 0) {
+              contenedor.innerHTML = "<p>No se encontraron facturas.</p>";
+              return;
+            }
+        
+            facturas.forEach(factura => {
+              const div = document.createElement("div");
+              div.classList.add("factura");
+              div.innerHTML = `
+                <p><b>Factura:</b> ${factura.id_factura}</p>
+                <p><b>ID Pedido:</b> ${factura.id_pedido}</p>
+                <p><b>Fecha:</b> ${factura.fecha_emision}</p>
+                <p><b>Total compra productos (ya con IVA 15%):</b> $${factura.total.toFixed(2)}</p>
+                <p><b>Transporte:</b> ${factura.transporte_nombre} - $${factura.transporte_precio.toFixed(2)}</p>
+                <hr>
+              `;
+              contenedor.appendChild(div);
+            });
+        
+          } catch (error) {
+            console.error("❌ Error al cargar las facturas:", error.message);
+          }
+        }
+        
+        document.getElementById("filtro-fechas").addEventListener("submit", function (e) {
+          e.preventDefault();
+          cargarFacturas();
+        });
+        
+        cargarFacturas();
+    </script>
+</body>
+</html>
