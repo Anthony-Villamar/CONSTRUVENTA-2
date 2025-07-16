@@ -182,32 +182,39 @@ router.put("/envios/:id", async (req, res) => {
 // });
 
 // Ver envíos de un transportista (por transporte_id)
-router.get("/envios/transporte/:id", async (req, res) => {
+// Asignar transporte a un envio
+router.put("/envios/:id", async (req, res) => {
   const { id } = req.params;
+  const { transporte_id } = req.body;
+
+  if (!transporte_id) return res.status(400).json({ mensaje: "Falta transporte_id" });
 
   try {
-    const [filas] = await db.execute(`
-      SELECT 
-        e.*, 
-        t.nombre AS transporte_nombre,
-        u.nombre AS cliente_nombre,
-        u.apellido AS cliente_apellido,
-        u.id_cliente AS cliente_cedula,
-        u.direccion AS cliente_direccion,
-        u.zona AS cliente_zona
-      FROM envios e
-      JOIN transportes t ON e.transporte_id = t.id
-      JOIN usuario u ON e.id_cliente = u.id_cliente
-      WHERE e.transporte_id = ?
-      ORDER BY e.fecha_estimada DESC
-    `, [id]);
+    // Primero actualizamos el transporte del envío
+    await db.execute(`UPDATE envios SET transporte_id = ? WHERE id_envio = ?`, [transporte_id, id]);
 
-    res.json(filas);
+    // Ahora obtenemos el precio del transporte asignado
+    const [envio] = await db.execute(`SELECT * FROM envios WHERE id_envio = ?`, [id]);
+    if (!envio) {
+      return res.status(404).json({ mensaje: "Envío no encontrado." });
+    }
+
+    const precio_transporte = envio.transporte_id ? (await db.execute(`SELECT precio FROM transportes WHERE id = ?`, [envio.transporte_id]))[0][0].precio : 0;
+
+    if (!envio.id_pedido) {
+      return res.status(400).json({ mensaje: "No se pudo encontrar el id_pedido para la factura." });
+    }
+
+    // Actualizamos el precio del transporte en la tabla factura
+    await db.execute(`UPDATE factura SET transporte_precio = ? WHERE id_pedido = ?`, [precio_transporte, envio.id_pedido]);
+
+    res.json({ mensaje: "Transporte asignado y precio actualizado correctamente" });
   } catch (error) {
-    console.error("❌ Error al obtener envíos del transportista:", error.message);
-    res.status(500).json({ mensaje: "Error al obtener envíos", error: error.message });
+    console.error("❌ Error al asignar transporte:", error.message);
+    res.status(500).json({ mensaje: "Error al asignar transporte", error: error.message });
   }
 });
+
 // router.get("/envios/transporte/:id", async (req, res) => {
 //   const { id } = req.params;
 
