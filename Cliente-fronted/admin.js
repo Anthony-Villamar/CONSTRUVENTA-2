@@ -178,37 +178,6 @@ async function mostrarTransportesDisponibles(id_envio, zona) {
   }
 }
 
-// Asignar transporte a un envío
-// Asignar transporte a un envío
-async function asignarTransporte(id_envio) {
-  const transporte_id = document.getElementById("transporte_id").value;
-
-  // Verificar que se haya seleccionado un transporte
-  if (!transporte_id) {
-    alert("❌ Debes seleccionar un transporte.");
-    return;
-  }
-
-  try {
-    const res = await fetch(`https://envios-cff4.onrender.com/envios/${id_envio}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ transporte_id })
-    });
-
-    if (!res.ok) {
-      const errorData = await res.json();
-      alert(`❌ Error al asignar transporte: ${errorData.mensaje}`);
-      return;
-    }
-
-    alert("✅ Transporte asignado correctamente.");
-    cargarEnviosPendientes(); // Recarga la lista de envíos para ver los cambios
-  } catch (error) {
-    alert("❌ Error de conexión o de servidor. Inténtalo más tarde.");
-    console.error("Error al asignar transporte:", error);
-  }
-}
 
 
 async function cargarCompras() {
@@ -235,22 +204,24 @@ async function cargarCompras() {
     contenedor.appendChild(div);
   });
 }
-// async function asignarTransporte(id_envio) {
-//   const transporte_id = document.getElementById("transporte_id").value;
 
-//   const res = await fetch(`https://envios-cff4.onrender.com/envios/${id_envio}`, {
-//     method: "PUT",
-//     headers: { "Content-Type": "application/json" },
-//     body: JSON.stringify({ transporte_id })
-//   });
+Asignar transporte a un envío
+async function asignarTransporte(id_envio) {
+  const transporte_id = document.getElementById("transporte_id").value;
 
-//   if (res.ok) {
-//     alert("✅ Transporte asignado correctamente.");
-//     cargarEnviosPendientes(); // Recarga la lista de envíos
-//   } else {
-//     alert("❌ Error al asignar transporte.");
-//   }
-// }
+  const res = await fetch(`https://envios-cff4.onrender.com/envios/${id_envio}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ transporte_id })
+  });
+
+  if (res.ok) {
+    alert("✅ Transporte asignado correctamente.");
+    cargarEnviosPendientes(); // Recarga la lista de envíos
+  } else {
+    alert("❌ Error al asignar transporte.");
+  }
+}
 
 
 
