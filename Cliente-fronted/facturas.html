@@ -56,8 +56,8 @@
                 <p><b>Factura:</b> ${factura.id_factura}</p>
                 <p><b>ID Pedido:</b> ${factura.id_pedido}</p>
                 <p><b>Fecha:</b> ${factura.fecha_emision}</p>
-                <p><b>Total compra productos (ya con IVA 15%):</b> $${factura.total.toFixed(2)}</p>
-                <p><b>Transporte:</b> ${factura.transporte_nombre} - $${factura.transporte_precio.toFixed(2)}</p>
+                <p><b>Total compra productos:</b> $${factura.total.toFixed(2)}</p>
+                <p><b>Transporte:</b> ${factura.transporte_nombre} - $${(factura.transporte_precio || 0).toFixed(2)}</p>
                 <hr>
               `;
               contenedor.appendChild(div);
