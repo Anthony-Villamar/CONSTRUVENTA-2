@@ -14,71 +14,12 @@ const db = await mysql.createConnection({
 
 
 
-router.post("/facturas", async (req, res) => {
-  const { id_pedido_global } = req.body;  // Retirado transporte_precio de los parámetros del cuerpo
-  if (!id_pedido_global) return res.status(400).json({ mensaje: "Falta id_pedido_global" });
-
-  try {
-    // Obtener los productos del pedido
-    const [pedidos] = await db.execute(
-      `SELECT producto, cantidad FROM pedido WHERE id_pedido_global = ?`,
-      [id_pedido_global]
-    );
-
-    if (pedidos.length === 0) {
-      return res.status(400).json({ mensaje: "No hay productos en ese pedido global" });
-    }
-
-    let subtotal = 0;
-    for (const pedido of pedidos) {
-      const [productoRow] = await db.execute(
-        `SELECT precio FROM producto WHERE codigo_producto = ?`,
-        [pedido.producto]
-      );
-      if (productoRow.length === 0) continue;
-      const precio = parseFloat(productoRow[0].precio);
-      subtotal += precio * pedido.cantidad;
-    }
-
-    // Obtener el precio del transporte desde la tabla envios
-    const [envio] = await db.execute(
-      `SELECT e.transporte_id, t.precio AS transporte_precio 
-       FROM envios e 
-       JOIN transportes t ON e.transporte_id = t.id
-       WHERE e.id_pedido = ?`,
-      [id_pedido_global]
-    );
-
-    if (envio.length === 0) {
-      return res.status(400).json({ mensaje: "No se encontró transporte para el pedido" });
-    }
-
-    const transporte_precio = parseFloat(envio[0].transporte_precio) || 0;
-    
-    const iva = subtotal * 0.15;
-    const total = subtotal + iva + transporte_precio;
-
-    // Insertar la factura en la base de datos
-    await db.execute(
-      `INSERT INTO factura (id_pedido, fecha_emision, total, transporte_precio)
-       VALUES (?, CONVERT_TZ(NOW(), '+00:00', '-05:00'), ?, ?)`,
-      [id_pedido_global, total, transporte_precio]
-    );
-
-    res.json({ mensaje: "Factura generada", subtotal, iva, transporte: transporte_precio, total });
-
-  } catch (err) {
-    console.error("❌ Error al generar factura:", err.message);
-    res.status(500).json({ mensaje: "Error al generar factura" });
-  }
-});
-
-// // POST /facturas
 // router.post("/facturas", async (req, res) => {
-//   const { id_pedido_global, transporte_precio } = req.body;
+//   const { id_pedido_global } = req.body;  // Retirado transporte_precio de los parámetros del cuerpo
 //   if (!id_pedido_global) return res.status(400).json({ mensaje: "Falta id_pedido_global" });
 
 //   try {
+//     // Obtener los productos del pedido
 //     const [pedidos] = await db.execute(
 //       `SELECT producto, cantidad FROM pedido WHERE id_pedido_global = ?`,
 //       [id_pedido_global]
@@ -99,22 +40,81 @@ router.post("/facturas", async (req, res) => {
 //       subtotal += precio * pedido.cantidad;
 //     }
 
-//     const iva = subtotal * 0.15;
-//     const total = subtotal + iva + (parseFloat(transporte_precio) || 0);
+//     // Obtener el precio del transporte desde la tabla envios
+//     const [envio] = await db.execute(
+//       `SELECT e.transporte_id, t.precio AS transporte_precio 
+//        FROM envios e 
+//        JOIN transportes t ON e.transporte_id = t.id
+//        WHERE e.id_pedido = ?`,
+//       [id_pedido_global]
+//     );
 
+//     if (envio.length === 0) {
+//       return res.status(400).json({ mensaje: "No se encontró transporte para el pedido" });
+//     }
+
+//     const transporte_precio = parseFloat(envio[0].transporte_precio) || 0;
+    
+//     const iva = subtotal * 0.15;
+//     const total = subtotal + iva + transporte_precio;
+
+//     // Insertar la factura en la base de datos
 //     await db.execute(
 //       `INSERT INTO factura (id_pedido, fecha_emision, total, transporte_precio)
 //        VALUES (?, CONVERT_TZ(NOW(), '+00:00', '-05:00'), ?, ?)`,
 //       [id_pedido_global, total, transporte_precio]
 //     );
 
-//     res.json({ mensaje: "Factura generada", subtotal, iva, transporte: parseFloat(transporte_precio) || 0, total });
+//     res.json({ mensaje: "Factura generada", subtotal, iva, transporte: transporte_precio, total });
 
 //   } catch (err) {
 //     console.error("❌ Error al generar factura:", err.message);
 //     res.status(500).json({ mensaje: "Error al generar factura" });
 //   }
 // });
+
+// // POST /facturas
+router.post("/facturas", async (req, res) => {
+  const { id_pedido_global, transporte_precio } = req.body;
+  if (!id_pedido_global) return res.status(400).json({ mensaje: "Falta id_pedido_global" });
+
+  try {
+    const [pedidos] = await db.execute(
+      `SELECT producto, cantidad FROM pedido WHERE id_pedido_global = ?`,
+      [id_pedido_global]
+    );
+
+    if (pedidos.length === 0) {
+      return res.status(400).json({ mensaje: "No hay productos en ese pedido global" });
+    }
+
+    let subtotal = 0;
+    for (const pedido of pedidos) {
+      const [productoRow] = await db.execute(
+        `SELECT precio FROM producto WHERE codigo_producto = ?`,
+        [pedido.producto]
+      );
+      if (productoRow.length === 0) continue;
+      const precio = parseFloat(productoRow[0].precio);
+      subtotal += precio * pedido.cantidad;
+    }
+
+    const iva = subtotal * 0.15;
+    const total = subtotal + iva + (parseFloat(transporte_precio) || 0);
+
+    await db.execute(
+      `INSERT INTO factura (id_pedido, fecha_emision, total, transporte_precio)
+       VALUES (?, CONVERT_TZ(NOW(), '+00:00', '-05:00'), ?, ?)`,
+      [id_pedido_global, total, transporte_precio]
+    );
+
+    res.json({ mensaje: "Factura generada", subtotal, iva, transporte: parseFloat(transporte_precio) || 0, total });
+
+  } catch (err) {
+    console.error("❌ Error al generar factura:", err.message);
+    res.status(500).json({ mensaje: "Error al generar factura" });
+  }
+});
 
 
 // // CONSULTAR FACTURAS
