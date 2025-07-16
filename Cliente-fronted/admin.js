@@ -205,7 +205,7 @@ async function cargarCompras() {
   });
 }
 
-Asignar transporte a un envío
+//Asignar transporte a un envío
 async function asignarTransporte(id_envio) {
   const transporte_id = document.getElementById("transporte_id").value;
 
