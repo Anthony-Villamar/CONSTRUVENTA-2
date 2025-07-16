@@ -33,8 +33,8 @@ async function listarCompras() {
         <p><b>ID Pedido:</b> ${factura.id_pedido_global}</p>
         <p><b>Fecha:</b> ${factura.fecha_compra}</p>
         <p><b>Total compra productos:</b> $${(subtotal + iva).toFixed(2)}</p>
-        <p><b>Total envío:</b> $${transporte.toFixed(2)}</p>
-        <p><b>Total:</b> $${total.toFixed(2)}</p>
+        <!--<p><b>Total envío:</b> $${transporte.toFixed(2)}</p>-->
+        <!--<p><b>Total:</b> $${total.toFixed(2)}</p>-->
         <p><b>Productos:</b></p>
         <ul>
           ${factura.productos.split(', ').map(p => `<li>${p}</li>`).join("")}
