@@ -33,7 +33,7 @@
           const fecha_inicio = document.getElementById("fecha_inicio").value;
           const fecha_fin = document.getElementById("fecha_fin").value;
           
-          let url = `https://facturacion-cqr4.onrender.com/facturas/usuario/${usuario_id}`;
+          let url = `https://facturacion-cqr4.onrender.com/facturas/usuarios/${usuario_id}`;
           if (fecha_inicio && fecha_fin) {
             url += `?fecha_inicio=${fecha_inicio}&fecha_fin=${fecha_fin}`;
           }
