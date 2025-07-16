@@ -28,50 +28,25 @@ const listaEnvios = document.getElementById("listaEnvios");
 if (listaEnvios) {
   const transporteId = sessionStorage.getItem("transporte_id");
   if (!transporteId) window.location.href = "index.html";
-
-  fetch(`https://envios-cff4.onrender.com/envios/usuario/${transporteId}`)
-  .then(res => res.json())
-  .then(envios => {
-    envios.forEach(envio => {
-      const div = document.createElement("div");
-      div.className = "envio";
-      div.innerHTML = `
-        <p><strong>ID:</strong> ${envio.id_envio} | <strong>Pedido:</strong> ${envio.id_pedido}</p>
-        <p><strong>Estado:</strong> ${envio.estado}</p>
-        <p><strong>Cliente:</strong> ${envio.cliente_nombre} ${envio.cliente_apellido} (${envio.cliente_cedula})</p>
-        <p><strong>Dirección:</strong> ${envio.cliente_direccion}</p>
-        <p><strong>Zona:</strong> ${envio.cliente_zona}</p>
-        <select onchange="actualizarEstado(${envio.id_envio}, this.value)">
-          <option disabled selected>Cambiar estado</option>
-          <option value="pendiente">Pendiente</option>            
-          <option value="en tránsito">En tránsito</option>
-          <option value="entregado">Entregado</option>
-        </select>
-      `;
-      listaEnvios.appendChild(div);
-    });
-  });
-
-  
-  // fetch(`https://envios-cff4.onrender.com/envios/transporte/${transporteId}`)
-  //   .then(res => res.json())
-  //   .then(envios => {
-  //     envios.forEach(envio => {
-  //       const div = document.createElement("div");
-  //       div.className = "envio";
-  //       div.innerHTML = `
-  //         <p><strong>ID:</strong> ${envio.id_envio} | <strong>Pedido:</strong> ${envio.id_pedido}</p>
-  //         <p><strong>Estado:</strong> ${envio.estado}</p>
-  //         <p><strong>Cliente:</strong> ${envio.cliente_nombre} ${envio.cliente_apellido} (${envio.cliente_cedula})</p>
-  //         <p><strong>Dirección:</strong> ${envio.cliente_direccion}</p>
-  //         <p><strong>Zona:</strong> ${envio.cliente_zona}</p>
-  //         <select onchange="actualizarEstado(${envio.id_envio}, this.value)">
-  //           <option disabled selected>Cambiar estado</option>
-  //           <option value="pendiente">Pendiente</option>            
-  //           <option value="en tránsito">En tránsito</option>
-  //           <option value="entregado">Entregado</option>
-  //         </select>
-  //       `;
+  fetch(`https://envios-cff4.onrender.com/envios/transporte/${transporteId}`)
+    .then(res => res.json())
+    .then(envios => {
+      envios.forEach(envio => {
+        const div = document.createElement("div");
+        div.className = "envio";
+        div.innerHTML = `
+          <p><strong>ID:</strong> ${envio.id_envio} | <strong>Pedido:</strong> ${envio.id_pedido}</p>
+          <p><strong>Estado:</strong> ${envio.estado}</p>
+          <p><strong>Cliente:</strong> ${envio.cliente_nombre} ${envio.cliente_apellido} (${envio.cliente_cedula})</p>
+          <p><strong>Dirección:</strong> ${envio.cliente_direccion}</p>
+          <p><strong>Zona:</strong> ${envio.cliente_zona}</p>
+          <select onchange="actualizarEstado(${envio.id_envio}, this.value)">
+            <option disabled selected>Cambiar estado</option>
+            <option value="pendiente">Pendiente</option>            
+            <option value="en tránsito">En tránsito</option>
+            <option value="entregado">Entregado</option>
+          </select>
+        `;
 
   //       // div.innerHTML = `
   //       //   <p><strong>ID:</strong> ${envio.id_envio} | <strong>Pedido:</strong> ${envio.id_pedido}</p>
@@ -83,9 +58,9 @@ if (listaEnvios) {
   //       //     <option value="entregado">Entregado</option>
   //       //   </select>
   //       // `;
-  //       listaEnvios.appendChild(div);
-  //     });
-  //   });
+        listaEnvios.appendChild(div);
+      });
+    });
 }
 
 function actualizarEstado(idEnvio, nuevoEstado) {
