@@ -71,16 +71,15 @@ router.get("/envios/usuario/:id_cliente", async (req, res) => {
         GROUP_CONCAT(CONCAT(pr.nombre, ' x', p.cantidad) SEPARATOR ', ') AS productos,
         t.nombre AS transporte_nombre, 
         t.precio AS transporte_precio,
-        u.nombre AS cliente_nombre,
-        u.apellido AS cliente_apellido,
-        u.direccion AS cliente_direccion,
-        u.zona AS cliente_zona,
-        u.cedula AS cliente_cedula
+        u.nombre AS cliente_nombre,      -- Asegúrate de que este campo exista
+        u.apellido AS cliente_apellido,  -- Lo mismo aquí
+        u.direccion AS cliente_direccion, -- Igualmente, verifica este campo
+        u.zona AS cliente_zona           -- Asegúrate de que también esté presente
       FROM envios e
       JOIN pedido p ON e.id_pedido = p.id_pedido_global
       JOIN producto pr ON p.producto = pr.codigo_producto
       JOIN transportes t ON e.transporte_id = t.id
-      JOIN usuario u ON e.id_cliente = u.id_cliente
+      JOIN usuario u ON p.id_cliente = u.id_cliente   -- Cambié cedula por id_cliente aquí
       WHERE p.id_cliente = ?
       GROUP BY e.id_envio, p.id_pedido_global
       ORDER BY e.fecha_estimada DESC
