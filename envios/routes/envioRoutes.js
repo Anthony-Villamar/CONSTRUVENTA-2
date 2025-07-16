@@ -61,7 +61,6 @@ router.post("/envios", async (req, res) => {
 
 
 // Seguimiento de envios
-// Seguimiento de envios
 router.get("/envios/usuario/:id_cliente", async (req, res) => {
   const { id_cliente } = req.params;
 
@@ -72,17 +71,11 @@ router.get("/envios/usuario/:id_cliente", async (req, res) => {
         p.id_pedido_global, 
         GROUP_CONCAT(CONCAT(pr.nombre, ' x', p.cantidad) SEPARATOR ', ') AS productos,
         t.nombre AS transporte_nombre, 
-        t.precio AS transporte_precio,
-        u.nombre AS cliente_nombre,
-        u.apellido AS cliente_apellido,
-        u.direccion AS cliente_direccion,
-        u.zona AS cliente_zona,
-        u.cedula AS cliente_cedula
+        t.precio AS transporte_precio
       FROM envios e
       JOIN pedido p ON e.id_pedido = p.id_pedido_global
       JOIN producto pr ON p.producto = pr.codigo_producto
       JOIN transportes t ON e.transporte_id = t.id
-      JOIN usuario u ON e.id_cliente = u.id_cliente
       WHERE p.id_cliente = ?
       GROUP BY e.id_envio, p.id_pedido_global
       ORDER BY e.fecha_estimada DESC
@@ -94,33 +87,6 @@ router.get("/envios/usuario/:id_cliente", async (req, res) => {
     res.status(500).json({ mensaje: "Error al obtener envíos", error: error.message });
   }
 });
-
-// router.get("/envios/usuario/:id_cliente", async (req, res) => {
-//   const { id_cliente } = req.params;
-
-//   try {
-//     const [filas] = await db.execute(`
-//       SELECT 
-//         e.*, 
-//         p.id_pedido_global, 
-//         GROUP_CONCAT(CONCAT(pr.nombre, ' x', p.cantidad) SEPARATOR ', ') AS productos,
-//         t.nombre AS transporte_nombre, 
-//         t.precio AS transporte_precio
-//       FROM envios e
-//       JOIN pedido p ON e.id_pedido = p.id_pedido_global
-//       JOIN producto pr ON p.producto = pr.codigo_producto
-//       JOIN transportes t ON e.transporte_id = t.id
-//       WHERE p.id_cliente = ?
-//       GROUP BY e.id_envio, p.id_pedido_global
-//       ORDER BY e.fecha_estimada DESC
-//     `, [id_cliente]);
-
-//     res.json(filas);
-//   } catch (error) {
-//     console.error("❌ Error al obtener envíos:", error.message);
-//     res.status(500).json({ mensaje: "Error al obtener envíos", error: error.message });
-//   }
-// });
 
 
 router.get("/envios/pendientes", async (req, res) => {
@@ -161,7 +127,9 @@ router.get("/envios/pendientes", async (req, res) => {
 //   }
 // });
 
-// Asignar transporte a un envío
+
+
+// Asignar transporte a un envio
 router.put("/envios/:id", async (req, res) => {
   const { id } = req.params;
   const { transporte_id } = req.body;
@@ -174,9 +142,7 @@ router.put("/envios/:id", async (req, res) => {
 
     // Ahora obtenemos el precio del transporte asignado
     const [envio] = await db.execute(`SELECT * FROM envios WHERE id_envio = ?`, [id]);
-    const precio_transporte = envio.transporte_id ? 
-      (await db.execute(`SELECT precio FROM transportes WHERE id = ?`, [envio.transporte_id]))[0][0].precio 
-      : 0;
+    const precio_transporte = envio.transporte_id ? (await db.execute(`SELECT precio FROM transportes WHERE id = ?`, [envio.transporte_id]))[0][0].precio : 0;
 
     // Actualizamos el precio del transporte en la tabla factura
     await db.execute(`UPDATE factura SET transporte_precio = ? WHERE id_pedido = ?`, [precio_transporte, envio.id_pedido]);
@@ -187,33 +153,6 @@ router.put("/envios/:id", async (req, res) => {
     res.status(500).json({ mensaje: "Error al asignar transporte", error: error.message });
   }
 });
-
-
-
-// // Asignar transporte a un envio
-// router.put("/envios/:id", async (req, res) => {
-//   const { id } = req.params;
-//   const { transporte_id } = req.body;
-
-//   if (!transporte_id) return res.status(400).json({ mensaje: "Falta transporte_id" });
-
-//   try {
-//     // Primero actualizamos el transporte del envío
-//     await db.execute(`UPDATE envios SET transporte_id = ? WHERE id_envio = ?`, [transporte_id, id]);
-
-//     // Ahora obtenemos el precio del transporte asignado
-//     const [envio] = await db.execute(`SELECT * FROM envios WHERE id_envio = ?`, [id]);
-//     const precio_transporte = envio.transporte_id ? (await db.execute(`SELECT precio FROM transportes WHERE id = ?`, [envio.transporte_id]))[0][0].precio : 0;
-
-//     // Actualizamos el precio del transporte en la tabla factura
-//     await db.execute(`UPDATE factura SET transporte_precio = ? WHERE id_pedido = ?`, [precio_transporte, envio.id_pedido]);
-
-//     res.json({ mensaje: "Transporte asignado y precio actualizado correctamente" });
-//   } catch (error) {
-//     console.error("❌ Error al asignar transporte:", error.message);
-//     res.status(500).json({ mensaje: "Error al asignar transporte", error: error.message });
-//   }
-// });
 
 // Ver envíos de un transportista (por transporte_id)
 router.get("/envios/transporte/:id", async (req, res) => {
