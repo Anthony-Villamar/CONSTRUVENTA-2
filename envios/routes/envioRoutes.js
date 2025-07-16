@@ -71,17 +71,17 @@ router.get("/envios/usuario/:id_cliente", async (req, res) => {
         GROUP_CONCAT(CONCAT(pr.nombre, ' x', p.cantidad) SEPARATOR ', ') AS productos,
         t.nombre AS transporte_nombre, 
         t.precio AS transporte_precio,
-        u.nombre AS cliente_nombre,      -- Aquí corregí el nombre del cliente
-        u.apellido AS cliente_apellido,  -- Aquí agregué el apellido
-        u.direccion AS cliente_direccion, -- Dirección del cliente
-        u.zona AS cliente_zona           -- Zona del cliente
+        u.nombre AS cliente_nombre,      -- Corregido
+        u.apellido AS cliente_apellido,  -- Corregido
+        u.direccion AS cliente_direccion, -- Corregido
+        u.zona AS cliente_zona           -- Corregido
       FROM envios e
       JOIN pedido p ON e.id_pedido = p.id_pedido_global
       JOIN producto pr ON p.producto = pr.codigo_producto
       JOIN transportes t ON e.transporte_id = t.id
-      JOIN usuario u ON p.id_cliente = u.id_cliente   -- Asegúrate de que id_cliente sea correcto
+      JOIN usuario u ON p.id_cliente = u.id_cliente
       WHERE p.id_cliente = ?
-      GROUP BY e.id_envio, p.id_pedido_global
+      GROUP BY e.id_envio, p.id_pedido_global, u.nombre, u.apellido, u.direccion, u.zona, t.nombre, t.precio
       ORDER BY e.fecha_estimada DESC
     `, [id_cliente]);
 
@@ -91,6 +91,7 @@ router.get("/envios/usuario/:id_cliente", async (req, res) => {
     res.status(500).json({ mensaje: "Error al obtener envíos", error: error.message });
   }
 });
+
 
 
 
