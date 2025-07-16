@@ -163,5 +163,37 @@ router.get("/facturas/usuario/:id_cliente", async (req, res) => {
   }
 });
 
+//para facturas.html
+// GET /facturas/usuario/:id_cliente
+router.get("/facturas/usuarios/:id_cliente", async (req, res) => {
+  const { id_cliente } = req.params;
+
+  try {
+    const [facturas] = await db.execute(`
+      SELECT 
+        f.id_factura, 
+        f.id_pedido, 
+        f.fecha_emision, 
+        f.total, 
+        f.transporte_precio,
+        e.transporte_id, 
+        t.nombre AS transporte_nombre,
+        t.precio AS transporte_precio
+      FROM factura f
+      JOIN envios e ON f.id_pedido = e.id_pedido
+      LEFT JOIN transportes t ON e.transporte_id = t.id
+      WHERE e.id_cliente = ?
+      ORDER BY f.fecha_emision DESC
+    `, [id_cliente]);
+
+    res.json(facturas);
+  } catch (error) {
+    console.error("❌ Error al obtener facturas:", error.message);
+    res.status(500).json({ mensaje: "Error al obtener facturas" });
+  }
+});
+
+
+
 export default router;
 
