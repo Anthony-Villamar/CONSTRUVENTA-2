@@ -16,7 +16,7 @@ const db = await mysql.createConnection({
 // Obtener TODOS los transportes
 router.get("/transportes", async (req, res) => {
   try {
-    const [filas] = await db.execute(SELECT * FROM transportes);
+    const [filas] = await db.execute(`SELECT * FROM transportes`);
     res.json(filas);
   } catch (error) {
     console.error("❌ Error al obtener transportes:", error.message);
@@ -27,7 +27,7 @@ router.get("/transportes", async (req, res) => {
 // Obtener transportes por zona
 router.get("/transportes/:zona", async (req, res) => {
   const zona = req.params.zona;
-  const [filas] = await db.execute(SELECT * FROM transportes WHERE zonas_disponibles LIKE ?, [%${zona}%]);
+  const [filas] = await db.execute(`SELECT * FROM transportes WHERE zonas_disponibles LIKE ?`, [`%${zona}%`]);
   res.json(filas);
 });
 
@@ -47,8 +47,8 @@ router.post("/envios", async (req, res) => {
 
   try {
     await db.execute(
-    INSERT INTO envios (id_pedido, direccion_entrega, transporte_id, estado, fecha_estimada, zona_entrega, id_cliente)
-    VALUES (?, ?, ?, 'pendiente', ?, ?, ?)
+    `INSERT INTO envios (id_pedido, direccion_entrega, transporte_id, estado, fecha_estimada, zona_entrega, id_cliente)
+    VALUES (?, ?, ?, 'pendiente', ?, ?, ?)`
     , [id_pedido, direccion_entrega, transporte_id, fecha_estimada, zona_entrega, id_cliente]);
 
     res.json({ mensaje: "Envío registrado", id_pedido, fecha_estimada });
@@ -132,7 +132,7 @@ router.get("/envios/transporte/:id", async (req, res) => {
   const { id } = req.params;
 
   try {
-    const [filas] = await db.execute(
+    const [filas] = await db.execute(`
       SELECT 
         e.*, 
         t.nombre AS transporte_nombre,
@@ -146,7 +146,7 @@ router.get("/envios/transporte/:id", async (req, res) => {
       JOIN usuario u ON e.id_cliente = u.id_cliente
       WHERE e.transporte_id = ?
       ORDER BY e.fecha_estimada DESC
-    , [id]);
+   `, [id]);
 
     res.json(filas);
   } catch (error) {
@@ -158,13 +158,13 @@ router.get("/envios/transporte/:id", async (req, res) => {
 //   const { id } = req.params;
 
 //   try {
-//     const [filas] = await db.execute(
-//       SELECT e.*, t.nombre AS transporte_nombre
-//       FROM envios e
-//       JOIN transportes t ON e.transporte_id = t.id
-//       WHERE e.transporte_id = ?
-//       ORDER BY e.fecha_estimada DESC
-//     , [id]);
+    // const [filas] = await db.execute(
+    //   SELECT e.*, t.nombre AS transporte_nombre
+    //   FROM envios e
+    //   JOIN transportes t ON e.transporte_id = t.id
+    //   WHERE e.transporte_id = ?
+    //   ORDER BY e.fecha_estimada DESC
+    // , [id]);
 
 //     res.json(filas);
 //   } catch (error) {
@@ -185,7 +185,7 @@ router.put("/envios/:id/estado", async (req, res) => {
   }
 
   try {
-    await db.execute(UPDATE envios SET estado = ? WHERE id_envio = ?, [estado, id]);
+    await db.execute(`UPDATE envios SET estado = ? WHERE id_envio = ?`, [estado, id]);
     res.json({ mensaje: "Estado actualizado correctamente" });
   } catch (error) {
     console.error("❌ Error al actualizar estado:", error.message);
@@ -199,7 +199,7 @@ router.post("/transportistas/login", async (req, res) => {
 
   try {
     const [rows] = await db.execute(
-      SELECT * FROM usuarios_transporte WHERE usuario = ?,
+      `SELECT * FROM usuarios_transporte WHERE usuario = ?`,
       [usuario]
     );
 
@@ -242,7 +242,7 @@ export default router;
 // // Obtener TODOS los transportes
 // router.get("/transportes", async (req, res) => {
 //   try {
-//     const [filas] = await db.execute(`SELECT * FROM transportes`);
+    // const [filas] = await db.execute(`SELECT * FROM transportes`);
 //     res.json(filas);
 //   } catch (error) {
 //     console.error("❌ Error al obtener transportes:", error.message);
