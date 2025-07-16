@@ -1,13 +1,13 @@
 const usuario_id = sessionStorage.getItem("cedula");
 
 async function listarCompras() {
-  // const fecha_inicio = document.getElementById("fecha_inicio").value;
-  // const fecha_fin = document.getElementById("fecha_fin").value;
+  const fecha_inicio = document.getElementById("fecha_inicio").value;
+  const fecha_fin = document.getElementById("fecha_fin").value;
 
   let url = `https://facturacion-cqr4.onrender.com/facturas/usuario/${usuario_id}`;
-  // if (fecha_inicio && fecha_fin) {
-  //   url += `?fecha_inicio=${fecha_inicio}&fecha_fin=${fecha_fin}`;
-  // }
+  if (fecha_inicio && fecha_fin) {
+    url += `?fecha_inicio=${fecha_inicio}&fecha_fin=${fecha_fin}`;
+  }
 
   try {
     const res = await fetch(url);
