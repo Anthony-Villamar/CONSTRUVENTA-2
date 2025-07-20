@@ -195,8 +195,9 @@ paypal.Buttons({
   createOrder: function(data, actions) {
     const subtotal = carrito.reduce((acc, item) => acc + item.precio * item.cantidad, 0);
     const envio = 0;
-const subtotalFinal = subtotal * 0.15;
-const totalFinal = subtotal + subtotalFinal;
+//const subtotalFinal = subtotal * 0.15;
+// const totalFinal = subtotal + subtotalFinal;
+    const totalFinal = subtotal;
 
 
     if (totalFinal <= 0) {
