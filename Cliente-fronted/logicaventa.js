@@ -7,6 +7,7 @@ const usuario_id = sessionStorage.getItem("cedula");
 async function cargarProductos() {
   const res = await fetch("https://inventario-u6ci.onrender.com/api/productos");
   const productos = await res.json();
+  console.log('Productos recibidos:', productos);
   const contenedor = document.getElementById("productos");
   contenedor.innerHTML = "";
   productos.forEach(p => {
