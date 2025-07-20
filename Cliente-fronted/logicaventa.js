@@ -179,6 +179,7 @@ function toggleTransporte() {
     transporteSeleccionado = null;
      if (precioTransporte) {
       precioTransporte.innerText = "Transporte desactivado";
+       actualizarResumen();
     }
     actualizarResumen();
   } else {
