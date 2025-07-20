@@ -273,11 +273,11 @@ if (document.getElementById("usarTransporte").checked) { // ✅ si pidió transp
   
       // ✅ 4. Ejecutar ambas promesas en paralelo
       const [facturaRes, envioRes] = await Promise.all([facturaPromise, envioPromise]);
-    console.log("Respuesta de factura:", facturaRes);
       if (!facturaRes.ok) throw new Error("❌ Error en /facturas");
   
       // ✅ 5. Mostrar alerta diferenciada
       if (envioRealizado) {
+        console.log("Respuesta de factura:", facturaRes);
         console.log("✅ Envío registrado:", envioRes);
         alert("Pedido, factura y envío registrados correctamente.");
       } else {
