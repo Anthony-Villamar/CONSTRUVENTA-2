@@ -239,10 +239,7 @@ const totalFinal = subtotal + subtotalFinal;
         body: JSON.stringify({ id_pedido_global, transporte_precio: totalTransporte })
         // body: JSON.stringify({ id_pedido_global, transporte_precio: totalTransporte })
 
-      }).then(res => {
-            if (!res.ok) throw new Error("❌ Error en /factura");
-            return res.json();
-          });
+      });
   
       // ✅ 3. Preparar envio promise si hay transporte seleccionado
       // En logicaventa.js ➔ dentro de onApprove
