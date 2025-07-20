@@ -207,7 +207,7 @@ const totalFinal = subtotal + subtotalFinal;
       purchase_units: [{ amount: { value: totalFinal.toFixed(2) } }]
     });
   },
-  onApprove: async function(data, actions) {
+   onApprove: async function(data, actions) {
     await actions.order.capture();
     alert("¡Pago exitoso!");
   
@@ -247,7 +247,7 @@ let envioPromise = Promise.resolve(); // default si no hay transporte
 let envioRealizado = false;
 
 if (document.getElementById("usarTransporte").checked) { // ✅ si pidió transporte
-  const usuarioRes = await fetch(`https://construventa-2-36ul.onrender.com/usuarios/${usuario_id}`);
+  const usuarioRes = await fetch(https://construventa-2-36ul.onrender.com/usuarios/${usuario_id});
   const usuario = await usuarioRes.json();
   const direccion = usuario.direccion;
   const zona = usuario.zona;
@@ -272,11 +272,11 @@ if (document.getElementById("usarTransporte").checked) { // ✅ si pidió transp
   
       // ✅ 4. Ejecutar ambas promesas en paralelo
       const [facturaRes, envioRes] = await Promise.all([facturaPromise, envioPromise]);
+    console.log("Respuesta de factura:", facturaRes);
       if (!facturaRes.ok) throw new Error("❌ Error en /facturas");
   
       // ✅ 5. Mostrar alerta diferenciada
       if (envioRealizado) {
-        console.log("Respuesta de factura:", facturaRes);
         console.log("✅ Envío registrado:", envioRes);
         alert("Pedido, factura y envío registrados correctamente.");
       } else {
