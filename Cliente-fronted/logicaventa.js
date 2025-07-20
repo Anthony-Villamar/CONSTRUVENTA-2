@@ -185,9 +185,11 @@ function toggleTransporte() {
     // asignarTransportePorPeso();
     if (precioTransporte) {
           precioTransporte.innerText = "Transporte será asignado por el administrador.";
+          actualizarResumen()
         }    
     actualizarResumen();
   }
+  actualizarResumen()
 }
 
 paypal.Buttons({
