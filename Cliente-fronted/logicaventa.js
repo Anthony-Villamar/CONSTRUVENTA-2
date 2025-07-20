@@ -239,7 +239,7 @@ const totalFinal = subtotal + subtotalFinal;
         // body: JSON.stringify({ id_pedido_global, transporte_precio: totalTransporte })
 
       });
-  console.log("Respuesta de factura:", facturaRes);
+  
       // ✅ 3. Preparar envio promise si hay transporte seleccionado
       // En logicaventa.js ➔ dentro de onApprove
 let envioPromise = Promise.resolve(); // default si no hay transporte
@@ -266,13 +266,12 @@ if (document.getElementById("usarTransporte").checked) { // ✅ si pidió transp
     envioRealizado = true;
     return res.json();
   });
-  console.log("Respuesta de envío:", envioRes);
 }
 
   
       // ✅ 4. Ejecutar ambas promesas en paralelo
       const [facturaRes, envioRes] = await Promise.all([facturaPromise, envioPromise]);
-  
+    console.log("Respuesta de factura:", facturaRes);
       if (!facturaRes.ok) throw new Error("❌ Error en /facturas");
   
       // ✅ 5. Mostrar alerta diferenciada
