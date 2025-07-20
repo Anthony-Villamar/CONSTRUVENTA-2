@@ -180,13 +180,13 @@ function toggleTransporte() {
      if (precioTransporte) {
       precioTransporte.innerText = "Transporte desactivado";
     }
-    actualizarResumen();
+    // actualizarResumen();
   } else {
     // asignarTransportePorPeso();
     if (precioTransporte) {
           precioTransporte.innerText = "Transporte será asignado por el administrador.";
         }    
-    actualizarResumen();
+    // actualizarResumen();
   }
   actualizarResumen()
 }
